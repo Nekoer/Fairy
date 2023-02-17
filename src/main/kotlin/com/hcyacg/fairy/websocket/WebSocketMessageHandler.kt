@@ -1,4 +1,4 @@
-package com.hcyacg.fairy.server.websocket
+package com.hcyacg.fairy.websocket
 
 import io.netty.channel.ChannelHandler
 import io.netty.channel.ChannelHandlerContext
@@ -12,8 +12,10 @@ import io.netty.util.concurrent.GlobalEventExecutor
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.serialization.json.long
 import lombok.extern.slf4j.Slf4j
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import java.net.InetSocketAddress
 import java.util.*
@@ -33,23 +35,24 @@ class WebSocketMessageHandler : SimpleChannelInboundHandler<WebSocketFrame>() {
         prettyPrint = true
         ignoreUnknownKeys = true
     }
-
+//    @Volatile
+//    private var asyncId: Long = 0
+//
+//    @Synchronized
+//    internal fun nextAsyncId(): Long {
+//        asyncId += 1
+//        val new = asyncId
+//        if (new > 1000000) {
+//            asyncId = Random().nextLong(1060000)
+//        }
+//        return new
+//    }
     companion object {
         var users: ChannelGroup = DefaultChannelGroup(GlobalEventExecutor.INSTANCE)
     }
 
-    @Volatile
-    private var asyncId: Long = 0
-
-    @Synchronized
-    internal fun nextAsyncId(): Long {
-        asyncId += 1
-        val new = asyncId
-        if (new > 1000000) {
-            asyncId = Random().nextLong(1060000)
-        }
-        return new
-    }
+    @Autowired
+    private lateinit var gameCommandHandler : GameCommandHandler
 
 
     override fun channelRead0(ctx: ChannelHandlerContext?, msg: WebSocketFrame?) {
@@ -61,9 +64,9 @@ class WebSocketMessageHandler : SimpleChannelInboundHandler<WebSocketFrame>() {
 
     @Deprecated("Deprecated in Java")
     override fun exceptionCaught(ctx: ChannelHandlerContext?, cause: Throwable?) {
-        cause?.printStackTrace();
-        ctx?.close();
-        log.error("异常信息：rn " + cause?.message);
+        cause?.printStackTrace()
+        ctx?.close()
+        log.error("异常信息：rn " + cause?.message)
     }
 
     override fun channelActive(ctx: ChannelHandlerContext) {
@@ -96,35 +99,51 @@ class WebSocketMessageHandler : SimpleChannelInboundHandler<WebSocketFrame>() {
 
         val textWebSocketFrame = msg as TextWebSocketFrame
         val data = json.parseToJsonElement(textWebSocketFrame.text())
-        data.jsonObject["post_type"]?.let {
-            it.jsonPrimitive.let { jsonPrimitive ->
-                when (jsonPrimitive.content) {
-                    //通知上报
-                    "notice" -> {}
-                    //元事件上报
-                    "meta_event" -> {}
-                    //消息上报
-                    "message" -> {
-                        data.jsonObject["message_type"]?.let { jsonElement ->
-                            jsonElement.jsonPrimitive.let { jsonPrimitive ->
-                                when (jsonPrimitive.content) {
-                                    "private" -> {}
-                                    "group" -> {}
-                                    "guild" -> {}
-                                }
+        val postType = data.jsonObject["post_type"]?.jsonPrimitive?.content
+        postType?.let {
+            when (it) {
+                //通知上报
+                "notice" -> {}
+                //元事件上报
+                "meta_event" -> {}
+                //消息上报
+                "message" -> {
+                    val messageType = data.jsonObject["message_type"]?.jsonPrimitive?.content
+                    messageType?.let { type ->
+                        when (type) {
+                            "private" -> {
+
                             }
+                            "group" -> {
+                                val message = data.jsonObject["message"]?.jsonPrimitive?.content
+                                val sender = data.jsonObject["user_id"]?.jsonPrimitive?.long
+                                val group = data.jsonObject["group_id"]?.jsonPrimitive?.long
+
+                                group?.let {
+                                    sender?.let {
+                                        message?.let {
+                                            gameCommandHandler.distribute(ctx,type,sender,group,message)
+                                        }
+                                    }
+                                }
+
+                            }
+                            "guild" -> {
+
+                            }
+
+                            else -> {}
                         }
                     }
-                    "message_sent" -> {}
-                    //请求上报
-                    "request" -> {}
-                    else -> {}
                 }
+                "message_sent" -> {}
+                //请求上报
+                "request" -> {}
+                else -> {}
             }
         }
 
 
         super.channelRead(ctx, msg)
-        log.debug("内容 => {}", msg.toString())
     }
 }

@@ -1,7 +1,8 @@
-package com.hcyacg.fairy.server.service
+package com.hcyacg.fairy.service
 
 import com.baomidou.mybatisplus.extension.service.IService
-import com.hcyacg.fairy.server.entity.Account
+import com.hcyacg.fairy.dto.AccountDTO
+import com.hcyacg.fairy.entity.Account
 
 /**
  * @Author Nekoer
@@ -10,6 +11,11 @@ import com.hcyacg.fairy.server.entity.Account
  **/
 interface AccountService : IService<Account> {
 
-    fun register(uin: Long): Boolean
+    fun register(uin: Long,isRebirth: Boolean = false): Boolean
 
+    fun info(uin: Long): AccountDTO?
+
+    fun rebirth(uin: Long): Boolean
+
+    fun deleteAccount(uin: Long): Boolean
 }

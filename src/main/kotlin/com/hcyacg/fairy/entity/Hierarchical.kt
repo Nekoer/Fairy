@@ -1,4 +1,4 @@
-package com.hcyacg.fairy.server.entity
+package com.hcyacg.fairy.entity
 
 import com.baomidou.mybatisplus.annotation.TableId
 import com.baomidou.mybatisplus.annotation.TableName

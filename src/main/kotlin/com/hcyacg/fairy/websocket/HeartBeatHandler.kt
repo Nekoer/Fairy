@@ -1,11 +1,11 @@
-package com.hcyacg.fairy.server.websocket
+package com.hcyacg.fairy.websocket
 
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.handler.timeout.IdleState;
-import io.netty.handler.timeout.IdleStateEvent;
-import lombok.extern.slf4j.Slf4j;
+import io.netty.channel.Channel
+import io.netty.channel.ChannelHandlerContext
+import io.netty.channel.ChannelInboundHandlerAdapter
+import io.netty.handler.timeout.IdleState
+import io.netty.handler.timeout.IdleStateEvent
+import lombok.extern.slf4j.Slf4j
 import org.slf4j.LoggerFactory
 
 

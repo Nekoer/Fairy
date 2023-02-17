@@ -1,7 +1,7 @@
-package com.hcyacg.fairy.server.mapper
+package com.hcyacg.fairy.mapper
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper
-import com.hcyacg.fairy.server.entity.Stone
+import com.hcyacg.fairy.entity.Stone
 import org.apache.ibatis.annotations.Mapper
 import org.springframework.stereotype.Repository
 

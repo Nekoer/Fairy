@@ -1,4 +1,4 @@
-package com.hcyacg.fairy.server.controller
+package com.hcyacg.fairy.controller
 
 
 

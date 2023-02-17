@@ -1,4 +1,4 @@
-package com.hcyacg.fairy.server.entity
+package com.hcyacg.fairy.entity
 
 import com.baomidou.mybatisplus.annotation.IdType
 import com.baomidou.mybatisplus.annotation.TableField
@@ -31,4 +31,6 @@ data class LingRoot(
     val fireMultiplier: Float,//火灵根修炼的倍率
     @TableField("soil_multiplier")
     val soilMultiplier: Float,//土灵根修炼的倍率
+
+    val weight: Int,// 权重
 )

@@ -1,4 +1,4 @@
-package com.hcyacg.fairy.server.entity
+package com.hcyacg.fairy.entity
 
 import com.baomidou.mybatisplus.annotation.IdType
 import com.baomidou.mybatisplus.annotation.TableField
@@ -25,4 +25,6 @@ data class Stone(
     val manaProportion: Int, // 法力兑换比例
     @TableField("stone_proportion")
     val stoneProportion: Int, // 货币兑换比例
+    @TableField("stone_type_id")
+    val stoneTypeId: Long, // 货币兑换比例
 )

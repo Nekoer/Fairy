@@ -1,11 +1,7 @@
-package com.hcyacg.fairy.server.websocket
+package com.hcyacg.fairy.websocket
 
-import lombok.AllArgsConstructor
-import lombok.Data
-import lombok.NoArgsConstructor
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.bind.ConstructorBinding
-import org.springframework.context.annotation.Configuration
 
 /**
  * @Author Nekoer

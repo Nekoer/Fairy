@@ -1,7 +1,7 @@
-package com.hcyacg.fairy.server.mapper
+package com.hcyacg.fairy.mapper
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper
-import com.hcyacg.fairy.server.entity.Hierarchical
+import com.hcyacg.fairy.entity.Hierarchical
 import org.apache.ibatis.annotations.Mapper
 import org.springframework.stereotype.Repository
 
