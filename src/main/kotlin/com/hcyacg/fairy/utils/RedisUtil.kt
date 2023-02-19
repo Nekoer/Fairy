@@ -44,8 +44,8 @@ class RedisUtil {
      * @param key 键 不能为null
      * @return 时间(秒) 返回0代表为永久有效
      */
-    fun getExpire(key: String?): Long {
-        return redisTemplate.getExpire(key!!, TimeUnit.SECONDS)
+    fun getExpire(key: String): Long {
+        return redisTemplate.getExpire(key, TimeUnit.SECONDS)
     }
 
     /**
@@ -68,10 +68,10 @@ class RedisUtil {
      *
      * @param key 可以传一个值 或多个
      */
-    fun del(vararg key: String?) {
+    fun del(vararg key: String) {
         if (key.isNotEmpty()) {
             if (key.size == 1) {
-                redisTemplate.delete(key[0]!!)
+                redisTemplate.delete(key[0])
             } else {
                 redisTemplate.delete((CollectionUtils.arrayToList(key) as Collection<String?>))
             }
@@ -87,8 +87,8 @@ class RedisUtil {
      * @param key 键
      * @return 值
      */
-    operator fun get(key: String?): Any? {
-        return if (key == null) null else redisTemplate.opsForValue()[key]
+    operator fun get(key: String): Any? {
+        return redisTemplate.opsForValue()[key]
     }
 
     /**
@@ -168,9 +168,9 @@ class RedisUtil {
      * @param key 键
      * @return
      */
-    fun sGet(key: String?): Set<Any?>? {
+    fun sGet(key: String): Set<Any>? {
         return try {
-            redisTemplate.opsForSet().members(key!!)
+            redisTemplate.opsForSet().members(key)
         } catch (e: Exception) {
             e.printStackTrace()
             null
@@ -184,9 +184,9 @@ class RedisUtil {
      * @param value 值
      * @return true 存在 false不存在
      */
-    fun sHasKey(key: String?, value: Any?): Boolean {
+    fun sHasKey(key: String, value: Any): Boolean {
         return try {
-            redisTemplate.opsForSet().isMember(key!!, value!!)!!
+            redisTemplate.opsForSet().isMember(key, value)!!
         } catch (e: Exception) {
             e.printStackTrace()
             false
@@ -200,9 +200,9 @@ class RedisUtil {
      * @param values 值 可以是多个
      * @return 成功个数
      */
-    fun sSet(key: String?, vararg values: Any?): Long {
+    fun sSet(key: String, vararg values: Any): Long {
         return try {
-            redisTemplate.opsForSet().add(key!!, *values)!!
+            redisTemplate.opsForSet().add(key, *values)!!
         } catch (e: Exception) {
             e.printStackTrace()
             0
@@ -217,9 +217,9 @@ class RedisUtil {
      * @param values 值 可以是多个
      * @return 成功个数
      */
-    fun sSetAndTime(key: String?, time: Long, vararg values: Any?): Long {
+    fun sSetAndTime(key: String, time: Long, vararg values: Any): Long {
         return try {
-            val count = redisTemplate.opsForSet().add(key!!, *values)
+            val count = redisTemplate.opsForSet().add(key, *values)
             if (time > 0) {
                 expire(key, time)
             }
@@ -236,9 +236,9 @@ class RedisUtil {
      * @param key 键
      * @return
      */
-    fun sGetSetSize(key: String?): Long {
+    fun sGetSetSize(key: String): Long {
         return try {
-            redisTemplate.opsForSet().size(key!!)!!
+            redisTemplate.opsForSet().size(key)!!
         } catch (e: Exception) {
             e.printStackTrace()
             0
@@ -252,9 +252,9 @@ class RedisUtil {
      * @param values 值 可以是多个
      * @return 移除的个数
      */
-    fun setRemove(key: String?, vararg values: Any?): Long {
+    fun setRemove(key: String, vararg values: Any): Long {
         return try {
-            val count = redisTemplate.opsForSet().remove(key!!, *values)
+            val count = redisTemplate.opsForSet().remove(key, *values)
             count!!
         } catch (e: Exception) {
             e.printStackTrace()
@@ -272,9 +272,9 @@ class RedisUtil {
      * @param end   结束  0 到 -1代表所有值
      * @return
      */
-    fun lGet(key: String?, start: Long, end: Long): List<Any?>? {
+    fun lGet(key: String, start: Long, end: Long): List<Any>? {
         return try {
-            redisTemplate.opsForList().range(key!!, start, end)
+            redisTemplate.opsForList().range(key, start, end)
         } catch (e: Exception) {
             e.printStackTrace()
             null
@@ -287,9 +287,9 @@ class RedisUtil {
      * @param key 键
      * @return
      */
-    fun lGetListSize(key: String?): Long {
+    fun lGetListSize(key: String): Long {
         return try {
-            redisTemplate.opsForList().size(key!!)!!
+            redisTemplate.opsForList().size(key)!!
         } catch (e: Exception) {
             e.printStackTrace()
             0
@@ -303,9 +303,9 @@ class RedisUtil {
      * @param index 索引  index>=0时， 0 表头，1 第二个元素，依次类推；index<0时，-1，表尾，-2倒数第二个元素，依次类推
      * @return
      */
-    fun lGetIndex(key: String?, index: Long): Any? {
+    fun lGetIndex(key: String, index: Long): Any? {
         return try {
-            redisTemplate.opsForList().index(key!!, index)
+            redisTemplate.opsForList().index(key, index)
         } catch (e: Exception) {
             e.printStackTrace()
             null
@@ -319,9 +319,9 @@ class RedisUtil {
      * @param value 值
      * @return
      */
-    fun lSet(key: String?, value: Any?): Boolean {
+    fun lSet(key: String, value: Any): Boolean {
         return try {
-            redisTemplate.opsForList().rightPush(key!!, value!!)
+            redisTemplate.opsForList().rightPush(key, value)
             true
         } catch (e: Exception) {
             e.printStackTrace()
@@ -334,9 +334,9 @@ class RedisUtil {
      * @param key 键
      * @return
      */
-    fun lPop(key: String?): Boolean {
+    fun lPop(key: String): Boolean {
         return try {
-            redisTemplate.opsForList().leftPop(key!!)
+            redisTemplate.opsForList().leftPop(key)
             true
         } catch (e: Exception) {
             e.printStackTrace()
@@ -352,9 +352,9 @@ class RedisUtil {
      * @param time  时间(秒)
      * @return
      */
-    fun lSet(key: String?, value: Any?, time: Long): Boolean {
+    fun lSet(key: String, value: Any, time: Long): Boolean {
         return try {
-            redisTemplate.opsForList().rightPush(key!!, value!!)
+            redisTemplate.opsForList().rightPush(key, value)
             if (time > 0) {
                 expire(key, time)
             }
@@ -372,9 +372,9 @@ class RedisUtil {
      * @param value 值
      * @return
      */
-    fun lSet(key: String?, value: List<Any?>?): Boolean {
+    fun lSet(key: String, value: List<Any>): Boolean {
         return try {
-            redisTemplate.opsForList().rightPushAll(key!!, value!!)
+            redisTemplate.opsForList().rightPushAll(key, value)
             true
         } catch (e: Exception) {
             e.printStackTrace()
@@ -390,9 +390,9 @@ class RedisUtil {
      * @param time  时间(秒)
      * @return
      */
-    fun lSet(key: String?, value: List<Any?>?, time: Long): Boolean {
+    fun lSet(key: String, value: List<Any>, time: Long): Boolean {
         return try {
-            redisTemplate.opsForList().rightPushAll(key!!, value!!)
+            redisTemplate.opsForList().rightPushAll(key, value)
             if (time > 0) {
                 expire(key, time)
             }
@@ -411,9 +411,9 @@ class RedisUtil {
      * @param value 值
      * @return
      */
-    fun lUpdateIndex(key: String?, index: Long, value: Any?): Boolean {
+    fun lUpdateIndex(key: String, index: Long, value: Any): Boolean {
         return try {
-            redisTemplate.opsForList()[key!!, index] = value!!
+            redisTemplate.opsForList()[key, index] = value
             true
         } catch (e: Exception) {
             e.printStackTrace()
@@ -429,9 +429,9 @@ class RedisUtil {
      * @param value 值
      * @return 移除的个数
      */
-    fun lRemove(key: String?, count: Long, value: Any?): Long {
+    fun lRemove(key: String, count: Long, value: Any): Long {
         return try {
-            val remove = redisTemplate.opsForList().remove(key!!, count, value!!)
+            val remove = redisTemplate.opsForList().remove(key, count, value)
             remove!!
         } catch (e: Exception) {
             e.printStackTrace()
@@ -449,16 +449,16 @@ class RedisUtil {
      * @param score
      * @return
      */
-    fun zSet(key: String?, value: Any?, score: Double): Boolean {
-        return redisTemplate.opsForZSet().add(key!!, value!!, score)!!
+    fun zSet(key: String, value: Any, score: Double): Boolean {
+        return redisTemplate.opsForZSet().add(key, value, score)!!
     }
 
-    fun batchZSet(key: String?, typles: Set<TypedTuple<Any?>?>?): Long {
-        return redisTemplate.opsForZSet().add(key!!, typles!!)!!
+    fun batchZSet(key: String, typles: Set<TypedTuple<Any>>): Long {
+        return redisTemplate.opsForZSet().add(key, typles)!!
     }
 
-    fun zIncrementScore(key: String?, value: Any?, delta: Long) {
-        redisTemplate.opsForZSet().incrementScore(key!!, value!!, delta.toDouble())
+    fun zIncrementScore(key: String, value: Any, delta: Long) {
+        redisTemplate.opsForZSet().incrementScore(key, value, delta.toDouble())
     }
 
     fun zUnionAndStore(key: String, otherKeys: Collection<String>, destKey: String) {
@@ -471,8 +471,8 @@ class RedisUtil {
      * @param value
      * @return
      */
-    fun getZsetScore(key: String?, value: Any?): Long {
-        val score = redisTemplate.opsForZSet().score(key!!, value!!)
+    fun getZsetScore(key: String, value: Any): Long {
+        val score = redisTemplate.opsForZSet().score(key, value)
         return score?.toLong() ?: 0
     }
 

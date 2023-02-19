@@ -23,7 +23,7 @@ data class Account(
     val exp: Long, // 拥有的经验值
     val point: BigDecimal, //点数 只能充值
     @TableField("ling_root_id")
-    val lingRootId: Long, //点数 只能充值
+    val lingRootId: Long, //灵根
     @TableField("ethnicity_id")
     val ethnicityId: Long //种族
 )

@@ -65,7 +65,7 @@ class SignServiceImpl : ServiceImpl<SignMapper, Sign>(), SignService {
                 //插入数据库
                 if (save(Sign(uin, System.currentTimeMillis(), 1))) {
                     redisUtil["${AppConstant.SIGN}:${uin}"] = 1
-                    redisUtil.expire("${AppConstant.SIGN}:${uin}", (System.currentTimeMillis() + (24 * 60 * 60 * 1000)))
+                    redisUtil.expire("${AppConstant.SIGN}:${uin}", (System.currentTimeMillis() + (36 * 60 * 60 * 1000)))
                     "恭喜您签到成功,您已签到1天"
                 } else {
                     "签到失败,插入数据异常"
@@ -90,7 +90,7 @@ class SignServiceImpl : ServiceImpl<SignMapper, Sign>(), SignService {
 
                     if (updateById(sign)) {
                         redisUtil["${AppConstant.SIGN}:${uin}"] = 1
-                        redisUtil.expire("${AppConstant.SIGN}:${uin}", (System.currentTimeMillis() + (24 * 60 * 60 * 1000)))
+                        redisUtil.expire("${AppConstant.SIGN}:${uin}", (System.currentTimeMillis() + (36 * 60 * 60 * 1000)))
                         "恭喜您签到成功,您已连续签到${sign.signDay}天"
                     } else {
                         "签到失败,插入数据异常"
@@ -102,7 +102,7 @@ class SignServiceImpl : ServiceImpl<SignMapper, Sign>(), SignService {
                     sign.signDay = 1
                     if (updateById(sign)) {
                         redisUtil["${AppConstant.SIGN}:${uin}"] = 1
-                        redisUtil.expire("${AppConstant.SIGN}:${uin}", (System.currentTimeMillis() + (24 * 60 * 60 * 1000)))
+                        redisUtil.expire("${AppConstant.SIGN}:${uin}", (System.currentTimeMillis() + (36 * 60 * 60 * 1000)))
                         "恭喜您签到成功,由于您中断了签到,本次签到重新计算,您已连续签到${sign.signDay}天"
                     } else {
                         "签到失败,插入数据异常"

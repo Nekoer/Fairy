@@ -31,6 +31,5 @@ data class LingRoot(
     val fireMultiplier: Float,//火灵根修炼的倍率
     @TableField("soil_multiplier")
     val soilMultiplier: Float,//土灵根修炼的倍率
-
-    val weight: Int,// 权重
+    val weight: Int,// 能抽到的权重
 )
