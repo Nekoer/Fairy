@@ -1,6 +1,8 @@
 package com.hcyacg.fairy.websocket
 
+import com.hcyacg.fairy.service.AccountPackageService
 import com.hcyacg.fairy.service.AccountService
+import com.hcyacg.fairy.service.ItemService
 import com.hcyacg.fairy.service.SignService
 import com.hcyacg.fairy.utils.Base64Util
 import com.hcyacg.fairy.utils.SkikoUtil
@@ -43,16 +45,20 @@ class GameCommandHandler {
     @Autowired
     private lateinit var signService: SignService
 
+    @Autowired
+    private lateinit var accountPackageService: AccountPackageService
+    @Autowired
+    private lateinit var itemService: ItemService
 
     // 分发
     fun distribute(ctx: ChannelHandlerContext, type: String, sender: Long, group: Long, message: String) {
         if (type.contentEquals("group")) {
             val params = mutableMapOf<String, Any?>()
             params["group_id"] = group.toString()
-            params["auto_escape"] = false
+            params["auto_escape"] = false // false 解析cq码 true 不解析cq码
             params["message"] = null
-            when (message) {
-                "我要修仙" -> {
+            when {
+                message.contentEquals("我要修仙") -> {
                     if (accountService.register(sender)) {
                         val info = accountService.info(sender)
                         params["message"] = "欢迎加入修真界,以下是你的初始信息\n${info?.toMessageString()}"
@@ -61,60 +67,79 @@ class GameCommandHandler {
                     }
                 }
 
-                "我的修仙信息" -> {
+                message.contentEquals("我的修仙信息") -> {
                     val info = accountService.info(sender)
-
                     if (info != null) {
-
                         params["message"] = "修士你好,以下是你的信息\n${info.toMessageString()}"
                     } else {
                         params["message"] = "获取个人信息失败,您可能还没进入修真界,请输入: 我要修仙"
-
                     }
                 }
-                "签到"->{
+                message.contentEquals("背包") -> {
+                    val packageList = accountPackageService.getPackageList(sender)
+                    val sb = StringBuffer()
+                    packageList.forEachIndexed { index, accountItem ->
+                        sb.append("${accountItem.item.name} ×${accountItem.quantity}")
+                        if (packageList.size - 1 != index){
+                            sb.append("\n")
+                        }
+                    }
+                    params["message"] = "你的背包内容如下\n$sb"
+                }
+
+                message.contentEquals("签到") -> {
                     params["message"] = signService.sign(sender)
                 }
-                "重入仙途"->{
-                    if (accountService.rebirth(sender)){
+
+                message.contentEquals("重入仙途") -> {
+                    if (accountService.rebirth(sender)) {
                         val info = accountService.info(sender)
                         params["message"] = "欢迎加入修真界,以下是你的初始信息\n${info?.toMessageString()}"
-                    }else{
+                    } else {
                         params["message"] = "重入仙途失败,可能您还未加入修仙之旅"
                     }
                 }
-                "金银阁"->{}
-                "改名xx"->{}
-                "突破"->{}
-                "直接突破"->{}
 
-                "闭关"->{}
-                "出关"->{}
-                "灵石出关"->{}
-
-                "排行榜"->{}
-                "悬赏令帮助"->{}
-                "我的状态"->{}
-
-                "宗门系统"->{}
-                "灵庄系统"->{}
-                "世界BOSS"->{}
-                "我的功法"->{}
-                "背包"->{}
-                "秘境系统"->{}
-                "炼丹帮助"->{}
+                message.contentEquals("金银阁") -> {}
+                message.contentEquals("改名xx") -> {}
+                message.contentEquals("突破") -> {}
+                message.contentEquals("直接突破") -> {}
+                message.contentEquals("闭关") -> {}
+                message.contentEquals("出关") -> {}
+                message.contentEquals("灵石出关") -> {}
+                message.contentEquals("排行榜") -> {}
+                message.contentEquals("悬赏令帮助") -> {}
+                message.contentEquals("我的状态") -> {}
+                message.contentEquals("宗门系统") -> {}
+                message.contentEquals("灵庄系统") -> {}
+                message.contentEquals("世界BOSS") -> {}
+                message.contentEquals("我的功法") -> {}
+                message.contentEquals("秘境系统") -> {}
+                message.contentEquals("炼丹帮助") -> {}
                 /**
                  * 9、送灵石100@xxx,偷灵石@xxx,抢灵石@xxx
                  */
-
+                message.contains(Regex("查询物品 [a-zA-Z0-9_\u4e00-\u9fa5]+")) -> {
+                    val name = message.replace("查询物品 ","")
+                    val sb = StringBuffer()
+                    val list = itemService.info(name)
+                    list.forEachIndexed { index, item ->
+                        sb.append("ID: ${item.id} 名称: ${item.name} 描述: ${item.description}")
+                        if (list.size - 1 != index){
+                            sb.append("\n\r")
+                        }
+                    }
+                    params["message"] = "查询到以下内容: \n$sb"
+                }
             }
+
             var data = params["message"].toString()
-            if (data.isNotBlank() and !data.equals(null) and (data != "null")){
+            if (data.isNotBlank() and !data.equals(null) and (data != "null")) {
                 //判断是否是base64编码
                 data = data.toImageBase64().toString()
-                if (data.isBase64()){
+                if (data.isBase64()) {
                     params["message"] = "[CQ:at,qq=$sender]\n[CQ:image,file=base64://${data}]"
-                }else{
+                } else {
                     params["message"] = "[CQ:at,qq=$sender]\n文转图服务异常"
                 }
                 ctx.channel().writeAndFlush(
@@ -135,7 +160,7 @@ class GameCommandHandler {
 
 
     fun String.toImageBase64(): String? {
-        log.debug("文转Base64编码 => {}",this)
+        log.debug("文转Base64编码 => {}", this)
         val data = skikoUtil.textToImage(this).makeImageSnapshot().encodeToData()
         return data?.let { base64Util.encodeBytes2Base64(it.bytes) }
     }
