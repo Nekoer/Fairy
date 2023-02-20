@@ -25,5 +25,7 @@ data class Account(
     @TableField("ling_root_id")
     val lingRootId: Long, //灵根
     @TableField("ethnicity_id")
-    val ethnicityId: Long //种族
+    val ethnicityId: Long, //种族
+    @TableField("world_map_id")
+    val worldMapId: Long //种族
 )

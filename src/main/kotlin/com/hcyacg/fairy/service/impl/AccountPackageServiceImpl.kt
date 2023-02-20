@@ -5,10 +5,15 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl
 import com.hcyacg.fairy.dto.AccountItem
 import com.hcyacg.fairy.dto.ItemDTO
 import com.hcyacg.fairy.dto.ItemUsageDTO
+import com.hcyacg.fairy.dto.Usage
 import com.hcyacg.fairy.entity.AccountPackage
 import com.hcyacg.fairy.entity.ItemUsage
+import com.hcyacg.fairy.mapper.AccountMapper
 import com.hcyacg.fairy.mapper.AccountPackageMapper
-import com.hcyacg.fairy.service.*
+import com.hcyacg.fairy.service.AccountPackageService
+import com.hcyacg.fairy.service.ItemService
+import com.hcyacg.fairy.service.ItemTypeService
+import com.hcyacg.fairy.service.ItemUsageService
 import lombok.EqualsAndHashCode
 import lombok.NoArgsConstructor
 import lombok.extern.slf4j.Slf4j
@@ -26,20 +31,17 @@ import org.springframework.transaction.annotation.Transactional
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @Transactional(rollbackFor = [Exception::class])
-class AccountPackageServiceImpl : ServiceImpl<AccountPackageMapper, AccountPackage>(), AccountPackageService {
-    @Autowired
-    private lateinit var accountService: AccountService
-    @Autowired
-    private lateinit var itemService: ItemService
-    @Autowired
-    private lateinit var itemUsageService: ItemUsageService
-    @Autowired
-    private lateinit var itemTypeService: ItemTypeService
-    @Autowired
-    private lateinit var usageService: UsageService
+class AccountPackageServiceImpl @Autowired constructor(
+    protected  var accountMapper: AccountMapper,
+    private  var itemService: ItemService,
+    private  var itemUsageService: ItemUsageService,
+    private  var itemTypeService: ItemTypeService
+) : ServiceImpl<AccountPackageMapper, AccountPackage>(), AccountPackageService {
+
+
     override fun getPackageList(uin: Long): List<AccountItem> {
         return try{
-            accountService.getById(uin)?.let {account ->
+            accountMapper.selectById(uin)?.let { account ->
                 val list = list(QueryWrapper<AccountPackage>().eq("uin", account.uin))
                 val accountItems = mutableListOf<AccountItem>()
                 list.forEach { accountPackage ->
@@ -48,7 +50,8 @@ class AccountPackageServiceImpl : ServiceImpl<AccountPackageMapper, AccountPacka
                         val itemUsages = itemUsageService.list(QueryWrapper<ItemUsage>().eq("item_id",item.id))
                         val itemUsageDTOs = mutableListOf<ItemUsageDTO>()
                         itemUsages.forEach { itemUsage ->
-                            val usage = usageService.getById(itemUsage.usageId)
+
+                            val usage = Usage.getUsageById(itemUsage.usageId)
                             itemUsageDTOs.add(
                                 ItemUsageDTO(
                                     usage.name,
@@ -78,6 +81,15 @@ class AccountPackageServiceImpl : ServiceImpl<AccountPackageMapper, AccountPacka
         }catch (e:Exception){
             log.error("获取 $uin 用户背包时异常 => {}",e)
             return mutableListOf()
+        }
+    }
+
+    override fun deleteAccountPackage(uin: Long): Boolean {
+        return try {
+            remove(QueryWrapper<AccountPackage>().eq("uin", uin))
+        }catch (e:Exception){
+            e.printStackTrace()
+            false
         }
     }
 }

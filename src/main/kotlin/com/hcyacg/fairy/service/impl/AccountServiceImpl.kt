@@ -25,19 +25,17 @@ import java.math.BigDecimal
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @Transactional(rollbackFor = [Exception::class])
-class AccountServiceImpl : ServiceImpl<AccountMapper, Account>(), AccountService {
+class AccountServiceImpl  : ServiceImpl<AccountMapper, Account>(), AccountService {
     @Autowired
     private lateinit var hierarchicalService: HierarchicalService
-
     @Autowired
     private lateinit var lingRootService: LingRootService
-
     @Autowired
     private lateinit var signService: SignService
-
     @Autowired
     private lateinit var ethnicityService: EthnicityService
-
+    @Autowired
+    private lateinit var accountPackageService: AccountPackageService
     override fun register(
         uin: Long,
         isRebirth: Boolean
@@ -56,6 +54,7 @@ class AccountServiceImpl : ServiceImpl<AccountMapper, Account>(), AccountService
             val lingRoot = lingRootService.randomLingRoot()
 
             lingRoot?.let {
+                //TODO worldMapId 之后获取传送点列表随机选择出生点
                 ethnicityService.randomEthnicity()?.let {
                     return save(
                         Account(
@@ -63,7 +62,8 @@ class AccountServiceImpl : ServiceImpl<AccountMapper, Account>(), AccountService
                             0,
                             BigDecimal.valueOf(0),
                             lingRoot.id,
-                            it.id
+                            it.id,
+                            1
                         )
                     )
                 }
@@ -132,6 +132,7 @@ class AccountServiceImpl : ServiceImpl<AccountMapper, Account>(), AccountService
             if (info != null) {
                 if (!deleteAccount(uin)) return false
                 if (!signService.deleteSign(uin)) return false
+                if (!accountPackageService.deleteAccountPackage(uin)) return false
             } else return false
 
             if (!register(uin, true)) return false

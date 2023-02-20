@@ -18,10 +18,10 @@ import lombok.NoArgsConstructor
 @NoArgsConstructor
 data class AccountDTO(
     val account: Account,
-    val lingRoot: LingRoot,
-    val ethnicity: Ethnicity,
-    val level: Hierarchical,
-    val upgrade:Hierarchical, //
+    val lingRoot: LingRoot, //灵根
+    val ethnicity: Ethnicity, //种族
+    val level: Hierarchical,  //当前级别
+    val upgrade:Hierarchical, // 下一个级别
     val health: Long,//生命值
     val mana: Long ,//法力
     val attack: Long, //攻击力
@@ -29,6 +29,7 @@ data class AccountDTO(
 ) {
     fun toMessageString():String{
         return "等级: ${level.level}".plus("\n")
+            .plus("境界: ${level.name}").plus("\n")
             .plus("种族: ${ethnicity.name}").plus("\n")
             .plus("灵根: ${lingRoot.name}").plus("\n")
             .plus("经验值: ${account.exp}/${upgrade.exp}").plus("\n")

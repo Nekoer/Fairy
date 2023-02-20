@@ -47,6 +47,7 @@ class GameCommandHandler {
 
     @Autowired
     private lateinit var accountPackageService: AccountPackageService
+
     @Autowired
     private lateinit var itemService: ItemService
 
@@ -75,12 +76,13 @@ class GameCommandHandler {
                         params["message"] = "获取个人信息失败,您可能还没进入修真界,请输入: 我要修仙"
                     }
                 }
+
                 message.contentEquals("背包") -> {
                     val packageList = accountPackageService.getPackageList(sender)
                     val sb = StringBuffer()
                     packageList.forEachIndexed { index, accountItem ->
                         sb.append("${accountItem.item.name} ×${accountItem.quantity}")
-                        if (packageList.size - 1 != index){
+                        if (packageList.size - 1 != index) {
                             sb.append("\n")
                         }
                     }
@@ -120,12 +122,12 @@ class GameCommandHandler {
                  * 9、送灵石100@xxx,偷灵石@xxx,抢灵石@xxx
                  */
                 message.contains(Regex("查询物品 [a-zA-Z0-9_\u4e00-\u9fa5]+")) -> {
-                    val name = message.replace("查询物品 ","")
+                    val name = message.replace("查询物品 ", "")
                     val sb = StringBuffer()
                     val list = itemService.info(name)
                     list.forEachIndexed { index, item ->
                         sb.append("ID: ${item.id} 名称: ${item.name} 描述: ${item.description}")
-                        if (list.size - 1 != index){
+                        if (list.size - 1 != index) {
                             sb.append("\n\r")
                         }
                     }
@@ -161,7 +163,7 @@ class GameCommandHandler {
 
     fun String.toImageBase64(): String? {
         log.debug("文转Base64编码 => {}", this)
-        val data = skikoUtil.textToImage(this).makeImageSnapshot().encodeToData()
+        val data = skikoUtil.textToImage(null,this).makeImageSnapshot().encodeToData()
         return data?.let { base64Util.encodeBytes2Base64(it.bytes) }
     }
 

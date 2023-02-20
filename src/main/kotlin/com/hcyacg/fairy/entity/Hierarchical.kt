@@ -18,6 +18,7 @@ import lombok.NoArgsConstructor
 data class Hierarchical(
     @TableId
     val level: Long,
+    val name: String,
     val exp: Long, //该等级升级所需经验值
     val health: Long,//生命值
     val mana: Long, //法力

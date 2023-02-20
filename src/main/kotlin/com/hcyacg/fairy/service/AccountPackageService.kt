@@ -13,5 +13,5 @@ interface AccountPackageService : IService<AccountPackage> {
 
     fun getPackageList(uin: Long) : List<AccountItem>
 
-
+    fun deleteAccountPackage(uin: Long): Boolean
 }

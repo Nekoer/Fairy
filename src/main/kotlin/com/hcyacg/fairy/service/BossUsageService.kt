@@ -1,12 +1,12 @@
 package com.hcyacg.fairy.service
 
 import com.baomidou.mybatisplus.extension.service.IService
-import com.hcyacg.fairy.entity.Usage
+import com.hcyacg.fairy.entity.BossUsage
 
 /**
  * @Author Nekoer
- * @Date  2/19/2023 18:03
+ * @Date  2/20/2023 20:29
  * @Description
  **/
-interface UsageService: IService<Usage> {
+interface BossUsageService : IService<BossUsage> {
 }
