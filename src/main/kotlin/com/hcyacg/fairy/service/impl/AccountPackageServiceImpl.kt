@@ -39,54 +39,51 @@ class AccountPackageServiceImpl @Autowired constructor(
 ) : ServiceImpl<AccountPackageMapper, AccountPackage>(), AccountPackageService {
 
 
-    override fun getPackageList(uin: Long): List<AccountItem> {
+    override fun getPackageList(accountId: Long): List<AccountItem> {
         return try{
-            accountMapper.selectById(uin)?.let { account ->
-                val list = list(QueryWrapper<AccountPackage>().eq("uin", account.uin))
-                val accountItems = mutableListOf<AccountItem>()
-                list.forEach { accountPackage ->
+            val list = list(QueryWrapper<AccountPackage>().eq("account_id", accountId))
+            val accountItems = mutableListOf<AccountItem>()
+            list.forEach { accountPackage ->
 
-                    itemService.getById(accountPackage.itemId)?.let {item ->
-                        val itemUsages = itemUsageService.list(QueryWrapper<ItemUsage>().eq("item_id",item.id))
-                        val itemUsageDTOs = mutableListOf<ItemUsageDTO>()
-                        itemUsages.forEach { itemUsage ->
+                itemService.getById(accountPackage.itemId)?.let {item ->
+                    val itemUsages = itemUsageService.list(QueryWrapper<ItemUsage>().eq("item_id",item.id))
+                    val itemUsageDTOs = mutableListOf<ItemUsageDTO>()
+                    itemUsages.forEach { itemUsage ->
 
-                            val usage = Usage.getUsageById(itemUsage.usageId)
-                            itemUsageDTOs.add(
-                                ItemUsageDTO(
-                                    usage.name,
-                                    itemUsage.attribute
-                                ))
-
-                        }
-                        itemTypeService.getItemTypeById(item.itemTypeId)?.let { itemType ->
-                            accountItems.add(AccountItem(
-                                id=item.id,
-                                uin=accountPackage.uin,
-                                ItemDTO(
-                                    id = item.id,
-                                    name = item.name,
-                                    description = item.description,
-                                    itemType = itemType,
-                                    itemUsages = itemUsageDTOs
-                                ),
-                                accountPackage.quantity
+                        val usage = Usage.getUsageById(itemUsage.usageId)
+                        itemUsageDTOs.add(
+                            ItemUsageDTO(
+                                usage.name,
+                                itemUsage.attribute
                             ))
-                        }
+
+                    }
+                    itemTypeService.getItemTypeById(item.itemTypeId)?.let { itemType ->
+                        accountItems.add(AccountItem(
+                            id=item.id,
+                            accountId=accountId,
+                            ItemDTO(
+                                id = item.id,
+                                name = item.name,
+                                description = item.description,
+                                itemType = itemType,
+                                itemUsages = itemUsageDTOs
+                            ),
+                            accountPackage.quantity
+                        ))
                     }
                 }
-                return accountItems
             }
-            mutableListOf()
+            accountItems
         }catch (e:Exception){
-            log.error("获取 $uin 用户背包时异常 => {}",e)
+            log.error("获取 $accountId 用户背包时异常 => {}",e)
             return mutableListOf()
         }
     }
 
-    override fun deleteAccountPackage(uin: Long): Boolean {
+    override fun deleteAccountPackage(accountId: Long): Boolean {
         return try {
-            remove(QueryWrapper<AccountPackage>().eq("uin", uin))
+            remove(QueryWrapper<AccountPackage>().eq("account_id", accountId))
         }catch (e:Exception){
             e.printStackTrace()
             false

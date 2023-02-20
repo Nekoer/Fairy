@@ -21,7 +21,8 @@ import lombok.NoArgsConstructor
 data class AccountPackage(
     @TableId(type = IdType.AUTO)
     val id: Long,
-    val uin: Long,
+    @TableField("account_id")
+    val accountId: Long,
     @TableField("item_id")
     val itemId: Long, // 物品id
     val quantity: Long // 数量

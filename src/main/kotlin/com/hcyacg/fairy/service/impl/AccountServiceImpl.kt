@@ -1,5 +1,6 @@
 package com.hcyacg.fairy.service.impl
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl
 import com.hcyacg.fairy.dto.AccountDTO
 import com.hcyacg.fairy.entity.Account
@@ -43,7 +44,8 @@ class AccountServiceImpl  : ServiceImpl<AccountMapper, Account>(), AccountServic
         try {
 
             if (!isRebirth) {
-                if (getById(uin) != null) {
+
+                if (getOne(QueryWrapper<Account>().eq("uin",uin)) != null) {
                     log.debug("用户已注册")
                     return false
                 }
@@ -78,7 +80,7 @@ class AccountServiceImpl  : ServiceImpl<AccountMapper, Account>(), AccountServic
 
     override fun info(uin: Long): AccountDTO? {
         return try {
-            val account = getById(uin)
+            val account = getOne(QueryWrapper<Account>().eq("uin",uin))
             account?.let {
                 val lingRoot = lingRootService.getById(account.lingRootId)
                 val ethnicity = ethnicityService.getById(account.ethnicityId)
@@ -124,18 +126,13 @@ class AccountServiceImpl  : ServiceImpl<AccountMapper, Account>(), AccountServic
         }
     }
 
-    override fun rebirth(uin: Long): Boolean {
+    override fun rebirth(id: Long): Boolean {
 
         //TODO 重生需要消耗
         return try {
-            val info = info(uin)
-            if (info != null) {
-                if (!deleteAccount(uin)) return false
-                if (!signService.deleteSign(uin)) return false
-                if (!accountPackageService.deleteAccountPackage(uin)) return false
-            } else return false
-
-            if (!register(uin, true)) return false
+            deleteAccount(id)
+            signService.deleteSign(id)
+            accountPackageService.deleteAccountPackage(id)
             true
         } catch (e: Exception) {
             e.printStackTrace()
@@ -144,9 +141,9 @@ class AccountServiceImpl  : ServiceImpl<AccountMapper, Account>(), AccountServic
         }
     }
 
-    override fun deleteAccount(uin: Long): Boolean {
+    override fun deleteAccount(id: Long): Boolean {
         return try {
-            removeById(uin)
+            removeById(id)
         } catch (e: Exception) {
             e.printStackTrace()
             log.error("删除账号异常 => {}", e)

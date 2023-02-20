@@ -11,7 +11,7 @@ import com.hcyacg.fairy.entity.AccountPackage
  **/
 interface AccountPackageService : IService<AccountPackage> {
 
-    fun getPackageList(uin: Long) : List<AccountItem>
+    fun getPackageList(accountId: Long) : List<AccountItem>
 
-    fun deleteAccountPackage(uin: Long): Boolean
+    fun deleteAccountPackage(accountId: Long): Boolean
 }

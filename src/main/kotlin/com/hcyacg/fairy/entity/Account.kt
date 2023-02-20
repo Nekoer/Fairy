@@ -1,5 +1,6 @@
 package com.hcyacg.fairy.entity
 
+import com.baomidou.mybatisplus.annotation.IdType
 import com.baomidou.mybatisplus.annotation.TableField
 import com.baomidou.mybatisplus.annotation.TableId
 import com.baomidou.mybatisplus.annotation.TableName
@@ -18,7 +19,8 @@ import java.math.BigDecimal
 @NoArgsConstructor
 @TableName("account")
 data class Account(
-    @TableId
+    @TableId(type = IdType.AUTO)
+    val id: Long,
     val uin: Long,
     val exp: Long, // 拥有的经验值
     val point: BigDecimal, //点数 只能充值
@@ -28,4 +30,16 @@ data class Account(
     val ethnicityId: Long, //种族
     @TableField("world_map_id")
     val worldMapId: Long //种族
-)
+) {
+    constructor(
+        uin: Long,
+        exp: Long,
+        point: BigDecimal,
+        lingRootId: Long,
+        ethnicityId: Long,
+        worldMapId: Long
+    ) : this(0, uin, exp, point, lingRootId, ethnicityId, worldMapId) {
+
+    }
+
+}

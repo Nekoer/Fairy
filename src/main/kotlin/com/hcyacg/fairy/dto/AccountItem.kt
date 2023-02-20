@@ -19,8 +19,8 @@ import lombok.NoArgsConstructor
 data class AccountItem(
     @SerialName("info")
     val id: Long,
-    @SerialName("uin")
-    val uin: Long,
+    @SerialName("account_id")
+    val accountId: Long,
     @SerialName("item")
     val item: ItemDTO, // 物品id
     @SerialName("quantity")

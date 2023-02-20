@@ -10,7 +10,7 @@ import com.hcyacg.fairy.entity.Sign
  **/
 interface SignService : IService<Sign> {
 
-    fun sign(uin: Long): String
+    fun sign(id: Long): String
 
-    fun deleteSign(uin: Long): Boolean
+    fun deleteSign(id: Long): Boolean
 }

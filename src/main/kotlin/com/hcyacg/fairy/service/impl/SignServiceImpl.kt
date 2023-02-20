@@ -56,16 +56,16 @@ class SignServiceImpl : ServiceImpl<SignMapper, Sign>(), SignService {
         return "$d 天 $h 时 $m 分 $s 秒"
     }
 
-    override fun sign(uin: Long): String {
+    override fun sign(id: Long): String {
         //TODO 签到奖励
         return try{
-            val sign = getById(uin)
+            val sign = getById(id)
             return if (null == sign) {
                 //初始化签到
                 //插入数据库
-                if (save(Sign(uin, System.currentTimeMillis(), 1))) {
-                    redisUtil["${AppConstant.SIGN}:${uin}"] = 1
-                    redisUtil.expire("${AppConstant.SIGN}:${uin}", (System.currentTimeMillis() + (36 * 60 * 60 * 1000)))
+                if (save(Sign(id, System.currentTimeMillis(), 1))) {
+                    redisUtil["${AppConstant.SIGN}:${id}"] = 1
+                    redisUtil.expire("${AppConstant.SIGN}:${id}", (System.currentTimeMillis() + (36 * 60 * 60 * 1000)))
                     "恭喜您签到成功,您已签到1天"
                 } else {
                     "签到失败,插入数据异常"
@@ -73,7 +73,7 @@ class SignServiceImpl : ServiceImpl<SignMapper, Sign>(), SignService {
 
             } else {
                 //判断redis是否存在签到，不存在则重新计算连续签到次数
-                if (redisUtil.hasKey("${AppConstant.SIGN}:${uin}")) {
+                if (redisUtil.hasKey("${AppConstant.SIGN}:${id}")) {
                     //查询数据库中该用户签到时间能否签到
 
                     val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
@@ -89,8 +89,8 @@ class SignServiceImpl : ServiceImpl<SignMapper, Sign>(), SignService {
                     sign.signDay += 1
 
                     if (updateById(sign)) {
-                        redisUtil["${AppConstant.SIGN}:${uin}"] = 1
-                        redisUtil.expire("${AppConstant.SIGN}:${uin}", (System.currentTimeMillis() + (36 * 60 * 60 * 1000)))
+                        redisUtil["${AppConstant.SIGN}:${id}"] = 1
+                        redisUtil.expire("${AppConstant.SIGN}:${id}", (System.currentTimeMillis() + (36 * 60 * 60 * 1000)))
                         "恭喜您签到成功,您已连续签到${sign.signDay}天"
                     } else {
                         "签到失败,插入数据异常"
@@ -101,8 +101,8 @@ class SignServiceImpl : ServiceImpl<SignMapper, Sign>(), SignService {
                     sign.time = System.currentTimeMillis()
                     sign.signDay = 1
                     if (updateById(sign)) {
-                        redisUtil["${AppConstant.SIGN}:${uin}"] = 1
-                        redisUtil.expire("${AppConstant.SIGN}:${uin}", (System.currentTimeMillis() + (36 * 60 * 60 * 1000)))
+                        redisUtil["${AppConstant.SIGN}:${id}"] = 1
+                        redisUtil.expire("${AppConstant.SIGN}:${id}", (System.currentTimeMillis() + (36 * 60 * 60 * 1000)))
                         "恭喜您签到成功,由于您中断了签到,本次签到重新计算,您已连续签到${sign.signDay}天"
                     } else {
                         "签到失败,插入数据异常"
@@ -116,9 +116,9 @@ class SignServiceImpl : ServiceImpl<SignMapper, Sign>(), SignService {
         }
     }
 
-    override fun deleteSign(uin: Long): Boolean {
+    override fun deleteSign(id: Long): Boolean {
         return try {
-            removeById(uin)
+            removeById(id)
         }catch (e:Exception){
             e.printStackTrace()
             return false

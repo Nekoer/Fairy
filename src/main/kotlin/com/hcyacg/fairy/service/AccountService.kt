@@ -15,7 +15,7 @@ interface AccountService : IService<Account> {
 
     fun info(uin: Long): AccountDTO?
 
-    fun rebirth(uin: Long): Boolean
+    fun rebirth(id: Long): Boolean
 
-    fun deleteAccount(uin: Long): Boolean
+    fun deleteAccount(id: Long): Boolean
 }

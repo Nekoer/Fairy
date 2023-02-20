@@ -58,6 +58,24 @@ class GameCommandHandler {
             params["group_id"] = group.toString()
             params["auto_escape"] = false // false 解析cq码 true 不解析cq码
             params["message"] = null
+            val senderInfo = accountService.info(sender)
+
+            if (senderInfo == null && !message.contentEquals("我要修仙")){
+                params["message"] = "[CQ:at,qq=$sender]\n[CQ:image,file=base64://${"您还没进入修真界,请输入: 我要修仙".toImageBase64()}]"
+                ctx.channel().writeAndFlush(
+                    TextWebSocketFrame(
+                        json.encodeToString(
+                            WsRequest(
+                                action = "send_group_msg",
+                                echo = ctx.channel().id().asLongText(),
+                                params = params
+                            )
+                        )
+                    )
+                )
+                return
+            }
+
             when {
                 message.contentEquals("我要修仙") -> {
                     if (accountService.register(sender)) {
@@ -69,34 +87,38 @@ class GameCommandHandler {
                 }
 
                 message.contentEquals("我的修仙信息") -> {
-                    val info = accountService.info(sender)
-                    if (info != null) {
-                        params["message"] = "修士你好,以下是你的信息\n${info.toMessageString()}"
+                    if (senderInfo != null) {
+                        params["message"] = "修士你好,以下是你的信息\n${senderInfo.toMessageString()}"
                     } else {
                         params["message"] = "获取个人信息失败,您可能还没进入修真界,请输入: 我要修仙"
                     }
                 }
 
                 message.contentEquals("背包") -> {
-                    val packageList = accountPackageService.getPackageList(sender)
-                    val sb = StringBuffer()
-                    packageList.forEachIndexed { index, accountItem ->
-                        sb.append("${accountItem.item.name} ×${accountItem.quantity}")
-                        if (packageList.size - 1 != index) {
-                            sb.append("\n")
+                    senderInfo?.let { accountDTO ->
+                        accountDTO.account.id.let {
+                            val packageList = accountPackageService.getPackageList(
+                                it
+                            )
+                            val sb = StringBuffer()
+                            packageList.forEachIndexed { index, accountItem ->
+                                sb.append("${accountItem.item.name} ×${accountItem.quantity}")
+                                if (packageList.size - 1 != index) {
+                                    sb.append("\n")
+                                }
+                            }
+                            params["message"] = "你的背包内容如下\n$sb"
                         }
                     }
-                    params["message"] = "你的背包内容如下\n$sb"
                 }
 
                 message.contentEquals("签到") -> {
-                    params["message"] = signService.sign(sender)
+                    params["message"] = signService.sign(senderInfo!!.account.id)
                 }
 
                 message.contentEquals("重入仙途") -> {
-                    if (accountService.rebirth(sender)) {
-                        val info = accountService.info(sender)
-                        params["message"] = "欢迎加入修真界,以下是你的初始信息\n${info?.toMessageString()}"
+                    if (accountService.rebirth(senderInfo!!.account.id)) {
+                        params["message"] = "您的账号已注销,可以重新加入修仙之旅了"
                     } else {
                         params["message"] = "重入仙途失败,可能您还未加入修仙之旅"
                     }

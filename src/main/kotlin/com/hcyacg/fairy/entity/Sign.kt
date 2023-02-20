@@ -18,7 +18,8 @@ import lombok.NoArgsConstructor
 @TableName("sign")
 data class Sign(
     @TableId
-    val uin:Long,
+    @TableField("account_id")
+    val accountId:Long,
     var time:Long,
     @TableField("sign_day")
     var signDay:Long
