@@ -50,6 +50,7 @@ class WebSocketMessageHandler : SimpleChannelInboundHandler<WebSocketFrame>() {
 //    }
     companion object {
         var users: ChannelGroup = DefaultChannelGroup(GlobalEventExecutor.INSTANCE)
+        var groups = mutableListOf<Long>()
     }
 
     @Autowired
@@ -121,6 +122,10 @@ class WebSocketMessageHandler : SimpleChannelInboundHandler<WebSocketFrame>() {
                                 val group = data.jsonObject["group_id"]?.jsonPrimitive?.long
 
                                 group?.let {
+                                    if (!groups.contains(group)){
+                                        groups.add(group)
+                                    }
+
                                     sender?.let {
                                         message?.let {
                                             gameCommandHandler.distribute(ctx,type,sender,group,message)

@@ -13,4 +13,5 @@ interface WorldMapService : IService<WorldMap> {
 
     fun position(id:Long): PositionDTO
 
+    fun getUnSafeWorldMap():List<WorldMap>
 }

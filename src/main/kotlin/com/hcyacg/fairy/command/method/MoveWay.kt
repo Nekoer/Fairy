@@ -3,6 +3,7 @@ package com.hcyacg.fairy.command.method
 import com.hcyacg.fairy.command.Command
 import com.hcyacg.fairy.command.DependenceService
 import com.hcyacg.fairy.command.GameCommandService
+import com.hcyacg.fairy.constant.AppConstant
 import com.hcyacg.fairy.dto.MoveDTO
 import org.springframework.stereotype.Service
 
@@ -38,13 +39,16 @@ class MoveWay: GameCommandService, DependenceService() {
                 .plus("上:${pos.top?.name ?: "道路不通"}").plus("\n")
                 .plus("下:${pos.bottom?.name ?: "道路不通"}").plus("\n")
                 .plus("左:${pos.left?.name ?: "道路不通"}").plus("\n")
-                .plus("右:${pos.right?.name ?: "道路不通"}")
+                .plus("右:${pos.right?.name ?: "道路不通"}").plus("\n")
+                .plus(if (pos.now.isSafe == AppConstant.WORLD_MAP_SAFE) "本区域为安全区" else "本区域不是安全区")
         }else {
             "非常抱歉,前方道路不通~".plus("\n")
                 .plus("上:${pos.top?.name ?: "道路不通"}").plus("\n")
                 .plus("下:${pos.bottom?.name ?: "道路不通"}").plus("\n")
                 .plus("左:${pos.left?.name ?: "道路不通"}").plus("\n")
-                .plus("右:${pos.right?.name ?: "道路不通"}")
+                .plus("右:${pos.right?.name ?: "道路不通"}").plus("\n")
+                .plus(if (pos.now.isSafe == AppConstant.WORLD_MAP_SAFE) "本区域为安全区" else "本区域不是安全区")
+
         }
     }
 

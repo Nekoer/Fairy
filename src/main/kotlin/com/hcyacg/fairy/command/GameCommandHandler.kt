@@ -4,7 +4,6 @@ import com.hcyacg.fairy.websocket.WsRequest
 import io.netty.channel.ChannelHandlerContext
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame
 import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import lombok.extern.slf4j.Slf4j
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -23,10 +22,7 @@ class GameCommandHandler:DependenceService() {
     lateinit var gameContext: GameContext
     private val log = LoggerFactory.getLogger(this::class.java)
 
-    private val json = Json {
-        prettyPrint = true
-        ignoreUnknownKeys = true
-    }
+
 
     // 分发
     fun distribute(ctx: ChannelHandlerContext, type: String, sender: Long, group: Long, message: String) {

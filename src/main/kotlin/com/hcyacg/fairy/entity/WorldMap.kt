@@ -30,5 +30,7 @@ data class WorldMap(
     @TableField("bottom_id")
     val bottomId: Long?,//往下走的地址id
     @TableField("architecture_id")
-    val architectureId: Long //建筑种类 功能
+    val architectureId: Long, //建筑种类 功能
+    @TableField("is_safe")
+    val isSafe: Int //是否为安全点 不会主动生成怪物
 )

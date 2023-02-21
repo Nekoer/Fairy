@@ -21,4 +21,8 @@ import org.springframework.transaction.annotation.Transactional
 @EqualsAndHashCode(callSuper = true)
 @Transactional(rollbackFor = [Exception::class])
 class BossServiceImpl: ServiceImpl<BossMapper, Boss>(), BossService {
+    override fun randomBoss(): Boss {
+        val num = 1 .. count()
+        return getById(num.random())
+    }
 }

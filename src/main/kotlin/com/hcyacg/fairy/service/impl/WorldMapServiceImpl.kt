@@ -1,6 +1,8 @@
 package com.hcyacg.fairy.service.impl
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl
+import com.hcyacg.fairy.constant.AppConstant
 import com.hcyacg.fairy.dto.PositionDTO
 import com.hcyacg.fairy.entity.WorldMap
 import com.hcyacg.fairy.mapper.WorldMapMapper
@@ -29,5 +31,9 @@ class WorldMapServiceImpl : ServiceImpl<WorldMapMapper, WorldMap>(), WorldMapSer
         val right = getById(now.rightId)
         val bottom = getById(now.bottomId)
         return PositionDTO(now, top, left, right, bottom)
+    }
+
+    override fun getUnSafeWorldMap(): List<WorldMap> {
+        return list(QueryWrapper<WorldMap>().eq("is_safe",AppConstant.WORLD_MAP_UNSAFE))
     }
 }

@@ -9,4 +9,7 @@ import com.hcyacg.fairy.entity.Boss
  * @Description
  **/
 interface BossService : IService<Boss> {
+
+    fun randomBoss() :Boss
+
 }
