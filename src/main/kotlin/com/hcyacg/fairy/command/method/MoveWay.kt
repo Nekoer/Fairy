@@ -5,6 +5,9 @@ import com.hcyacg.fairy.command.DependenceService
 import com.hcyacg.fairy.command.GameCommandService
 import com.hcyacg.fairy.constant.AppConstant
 import com.hcyacg.fairy.dto.MoveDTO
+import org.springframework.data.redis.core.Cursor
+import org.springframework.data.redis.core.KeyScanOptions
+import org.springframework.data.redis.core.RedisCallback
 import org.springframework.stereotype.Service
 
 /**
@@ -18,7 +21,7 @@ class MoveWay: GameCommandService, DependenceService() {
     override fun group(sender: Long, group: Long, message: String): String {
         val direction = message.replace("移动 ","")
         lateinit var move : MoveDTO
-        val senderInfo = accountService.info(sender)
+        var senderInfo = accountService.info(sender)
         when(direction){
             "上" -> {
                 move = moveService.moveToTop(senderInfo!!.account.id)
@@ -33,23 +36,47 @@ class MoveWay: GameCommandService, DependenceService() {
                 move = moveService.moveToRight(senderInfo!!.account.id)
             }
         }
+        senderInfo = accountService.info(sender)
         val pos = worldMapService.position(senderInfo!!.account.worldMapId)
-        return if (move.move){
-            "您已从${move.before.name}移动到${move.after.name}".plus("\n")
-                .plus("上:${pos.top?.name ?: "道路不通"}").plus("\n")
-                .plus("下:${pos.bottom?.name ?: "道路不通"}").plus("\n")
-                .plus("左:${pos.left?.name ?: "道路不通"}").plus("\n")
-                .plus("右:${pos.right?.name ?: "道路不通"}").plus("\n")
-                .plus(if (pos.now.isSafe == AppConstant.WORLD_MAP_SAFE) "本区域为安全区" else "本区域不是安全区")
-        }else {
-            "非常抱歉,前方道路不通~".plus("\n")
-                .plus("上:${pos.top?.name ?: "道路不通"}").plus("\n")
-                .plus("下:${pos.bottom?.name ?: "道路不通"}").plus("\n")
-                .plus("左:${pos.left?.name ?: "道路不通"}").plus("\n")
-                .plus("右:${pos.right?.name ?: "道路不通"}").plus("\n")
-                .plus(if (pos.now.isSafe == AppConstant.WORLD_MAP_SAFE) "本区域为安全区" else "本区域不是安全区")
 
+        val key = "${AppConstant.BOSS_WORLD_MAP}${pos.now.id}:"
+
+        val keys = redisTemplate.execute(RedisCallback<Set<String>> { connection ->
+            val keysTmp: MutableSet<String> = HashSet()
+            val cursor: Cursor<ByteArray> =
+                connection.keyCommands().scan(KeyScanOptions.scanOptions().match("$key*").count(1000).build())
+
+            while (cursor.hasNext()) {
+                keysTmp.add(String(cursor.next()))
+            }
+            return@RedisCallback keysTmp
+        })
+
+
+        val sb = StringBuffer()
+        if (move.move){
+            sb.append("您已从${move.before.name}移动到${move.after.name}")
+        }else {
+            sb.append("非常抱歉,前方道路不通~")
         }
+        sb.append("\n")
+            .append("上:${pos.top?.name ?: "道路不通"}").append("\n")
+            .append("下:${pos.bottom?.name ?: "道路不通"}").append("\n")
+            .append("左:${pos.left?.name ?: "道路不通"}").append("\n")
+            .append("右:${pos.right?.name ?: "道路不通"}").append("\n")
+        if (pos.now.isSafe == AppConstant.WORLD_MAP_SAFE) {
+            sb.append("本区域为安全区" )
+        }else {
+            sb.append("本区域不是安全区")
+            sb.append("\n").append("怪物:")
+            keys?.forEach {
+                val id = it.replace(key,"").toInt()
+                val boss = bossService.getById(id)
+                sb.append("\n").append("${boss.level}级${boss.name}")
+            }
+        }
+
+        return sb.toString()
     }
 
     override fun channel(sender: Long, guild: Long, channel: Long, message: String): String {

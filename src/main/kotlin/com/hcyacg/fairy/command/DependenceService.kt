@@ -6,6 +6,7 @@ import com.hcyacg.fairy.utils.RedisUtil
 import com.hcyacg.fairy.utils.SkikoUtil
 import kotlinx.serialization.json.Json
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.stereotype.Service
 
 /**
@@ -15,6 +16,8 @@ import org.springframework.stereotype.Service
  **/
 @Service
 class DependenceService {
+    @Autowired
+    lateinit var redisTemplate : RedisTemplate<String, Any>
 
     val json = Json {
         prettyPrint = true

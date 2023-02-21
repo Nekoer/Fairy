@@ -7,11 +7,9 @@ import com.hcyacg.fairy.websocket.WsRequest
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame
 import kotlinx.serialization.encodeToString
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.redis.core.Cursor
 import org.springframework.data.redis.core.KeyScanOptions
 import org.springframework.data.redis.core.RedisCallback
-import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 
@@ -23,9 +21,6 @@ import org.springframework.stereotype.Component
  **/
 @Component
 class BossTask: DependenceService() {
-
-    @Autowired
-    private lateinit var redisTemplate : RedisTemplate<String,Any>
 
     private val log =  LoggerFactory.getLogger(this::class.java)
     /**
