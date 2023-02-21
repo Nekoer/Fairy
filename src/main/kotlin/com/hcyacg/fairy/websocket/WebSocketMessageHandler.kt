@@ -1,5 +1,6 @@
 package com.hcyacg.fairy.websocket
 
+import com.hcyacg.fairy.command.GameCommandHandler
 import io.netty.channel.ChannelHandler
 import io.netty.channel.ChannelHandlerContext
 import io.netty.channel.SimpleChannelInboundHandler

@@ -22,14 +22,14 @@ data class Account(
     @TableId(type = IdType.AUTO)
     val id: Long,
     val uin: Long,
-    val exp: Long, // 拥有的经验值
-    val point: BigDecimal, //点数 只能充值
+    var exp: Long, // 拥有的经验值
+    var point: BigDecimal, //点数 只能充值
     @TableField("ling_root_id")
     val lingRootId: Long, //灵根
     @TableField("ethnicity_id")
     val ethnicityId: Long, //种族
     @TableField("world_map_id")
-    val worldMapId: Long //种族
+    var worldMapId: Long //位置
 ) {
     constructor(
         uin: Long,
@@ -41,5 +41,4 @@ data class Account(
     ) : this(0, uin, exp, point, lingRootId, ethnicityId, worldMapId) {
 
     }
-
 }

@@ -21,10 +21,14 @@ data class WorldMap(
     @TableId(type = IdType.AUTO)
     val id: String,
     val name: String, //地址名
-    val top: Long, //往上走的地址id
-    val left: Long,//往左走的地址id
-    val right: Long,//往右走的地址id
-    val bottom: Long,//往下走的地址id
+    @TableField("top_id")
+    val topId: Long?, //往上走的地址id
+    @TableField("left_id")
+    val leftId: Long?,//往左走的地址id
+    @TableField("right_id")
+    val rightId: Long?,//往右走的地址id
+    @TableField("bottom_id")
+    val bottomId: Long?,//往下走的地址id
     @TableField("architecture_id")
-    val architectureId: Long
+    val architectureId: Long //建筑种类 功能
 )
