@@ -12,5 +12,6 @@ import java.lang.annotation.Inherited
 @Inherited
 annotation class Command(
     val type: String,
-    val regex: String
+    val regex: String,
+    val description: String
 )

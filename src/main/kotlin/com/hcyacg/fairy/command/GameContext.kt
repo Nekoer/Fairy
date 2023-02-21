@@ -1,5 +1,6 @@
 package com.hcyacg.fairy.command
 
+import com.hcyacg.fairy.constant.AppConstant
 import com.hcyacg.fairy.utils.SpringBeanUtil
 import lombok.extern.slf4j.Slf4j
 import org.slf4j.LoggerFactory
@@ -17,9 +18,10 @@ import java.util.*
 @Slf4j
 class GameContext {
     private val serviceMap: MutableMap<Command, GameCommandService> = HashMap<Command, GameCommandService>()
-    private val commandType:MutableList<String> = mutableListOf()
-    private val commandRegex:MutableList<String> = mutableListOf()
+    private val commandType: MutableList<String> = mutableListOf()
+    private val commandRegex: MutableList<String> = mutableListOf()
     private val log = LoggerFactory.getLogger(this::class.java)
+
     /**
      * 开局将所有策略注入到hashmap中
      *
@@ -32,18 +34,27 @@ class GameContext {
         )
         Arrays.stream(rpcBeans).toList()
             .forEach { name ->
-                log.debug("name:{}", name)
-                val bean = springBeanUtil.getApplicationContext().getBean(name)
-                val clazz: Class<*> = bean.javaClass
-                val serviceType: Command = clazz.getAnnotation(Command::class.java)
+                try {
+                    log.debug("name:{}", name)
+                    val bean = springBeanUtil.getApplicationContext().getBean(name)
+                    val clazz: Class<*> = bean.javaClass
+                    log.debug("clazz -> {}",clazz.name)
+                    val serviceType = clazz.getAnnotation(Command::class.java)
 
-                if (serviceType.type.isNotBlank()){
-                    commandType.add(serviceType.type)
+                    if (serviceType.type.isNotBlank()) {
+                        commandType.add(serviceType.type)
+                        AppConstant.COMMAND_DESCRIPTION[serviceType.type] = serviceType.description
+                    }
+                    if (serviceType.regex.isNotBlank()) {
+                        commandRegex.add(serviceType.regex)
+                        AppConstant.COMMAND_DESCRIPTION[serviceType.regex.split(" ")[0]] = serviceType.description
+                    }
+
+
+                    serviceMap[serviceType] = bean as GameCommandService
+                }catch (_:Exception){
+
                 }
-                if (serviceType.regex.isNotBlank()){
-                    commandRegex.add(serviceType.regex)
-                }
-                serviceMap[serviceType] = bean as GameCommandService
             }
     }
 
@@ -55,15 +66,15 @@ class GameContext {
      */
 
     fun getInstance(type: String): GameCommandService? {
-        var service : GameCommandService? = null
+        var service: GameCommandService? = null
         serviceMap.forEach { (t, u) ->
-            log.debug("type: {},regex : {}",t.type,t.regex)
-            if (t.regex.isNotBlank()){
-                if (Regex(t.regex).matches(type)){
+            log.debug("type: {},regex : {}", t.type, t.regex)
+            if (t.regex.isNotBlank()) {
+                if (Regex(t.regex).matches(type)) {
                     service = u
                 }
-            }else{
-                if (t.type.contentEquals(type)){
+            } else {
+                if (t.type.contentEquals(type)) {
                     service = u
                 }
             }
@@ -72,12 +83,12 @@ class GameContext {
         return service ?: throw RuntimeException("can not find game command")
     }
 
-    fun isCommand(command: String):Boolean{
-        if (commandType.contains(command)){
+    fun isCommand(command: String): Boolean {
+        if (commandType.contains(command)) {
             return true
         }
         commandRegex.forEach {
-            if (Regex(it).matches(command)){
+            if (Regex(it).matches(command)) {
                 return true
             }
         }

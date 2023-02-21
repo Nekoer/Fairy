@@ -1,28 +1,25 @@
-package com.hcyacg.fairy.command.method
+package com.hcyacg.fairy.command.method.admin
 
 import com.hcyacg.fairy.command.Command
 import com.hcyacg.fairy.command.DependenceService
 import com.hcyacg.fairy.command.GameCommandService
+import com.hcyacg.fairy.task.BossTask
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 /**
  * @Author Nekoer
- * @Date  2/21/2023 10:43
+ * @Date  2/21/2023 22:13
  * @Description
  **/
 @Service
-@Command("我要修仙","","注册修仙数据")
-class Register : GameCommandService, DependenceService() {
-
-
+@Command("生成boss","","生成boss")
+class MakeBoss : GameCommandService, DependenceService(){
+    @Autowired
+    private lateinit var bossTask: BossTask
     override fun group(sender: Long, group: Long, message: String): String {
-
-        return if (accountService.register(sender)) {
-            val info = accountService.info(sender)
-            "欢迎加入修真界,以下是你的初始信息\n${info?.toMessageString()}"
-        } else {
-            "注册失败,请勿重复注册"
-        }
+        bossTask.generateBoss()
+        return "操作成功"
     }
 
     override fun channel(sender: Long, guild: Long, channel: Long, message: String): String {
@@ -32,5 +29,4 @@ class Register : GameCommandService, DependenceService() {
     override fun chat(sender: Long, message: String): String {
         TODO("Not yet implemented")
     }
-
 }

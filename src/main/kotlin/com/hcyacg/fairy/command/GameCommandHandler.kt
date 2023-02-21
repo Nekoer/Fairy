@@ -17,18 +17,17 @@ import java.util.regex.Pattern
  **/
 @Component
 @Slf4j
-class GameCommandHandler:DependenceService() {
+class GameCommandHandler : DependenceService() {
     @Autowired
     lateinit var gameContext: GameContext
     private val log = LoggerFactory.getLogger(this::class.java)
-
 
 
     // 分发
     fun distribute(ctx: ChannelHandlerContext, type: String, sender: Long, group: Long, message: String) {
 
         //不是本游戏的命令
-        if (!gameContext.isCommand(message)){
+        if (!gameContext.isCommand(message)) {
             return
         }
 
@@ -43,7 +42,7 @@ class GameCommandHandler:DependenceService() {
             val gameCommandService = gameContext.getInstance(message)
             gameCommandService?.let {
                 val senderInfo = accountService.info(sender)
-                if (senderInfo == null && !message.contentEquals("我要修仙")){
+                if (senderInfo == null && !message.contentEquals("我要修仙")) {
                     params["message"] = "您还没进入修真界,请输入: 我要修仙"
                 } else {
                     params["message"] = it.group(sender, group, message)
@@ -105,7 +104,7 @@ class GameCommandHandler:DependenceService() {
 
     fun String.toImageBase64(): String? {
         log.debug("文转Base64编码 => {}", this)
-        val data = skikoUtil.textToImage(null,this).makeImageSnapshot().encodeToData()
+        val data = skikoUtil.textToImage(null, this).makeImageSnapshot().encodeToData()
         return data?.let { base64Util.encodeBytes2Base64(it.bytes) }
     }
 

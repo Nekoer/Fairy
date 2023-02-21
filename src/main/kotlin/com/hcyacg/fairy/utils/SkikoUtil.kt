@@ -58,13 +58,15 @@ class SkikoUtil {
             lrcRows += 1
         }
         var height = 0F
+        var width = 0F
         textArray.forEach {
             height += it.height
 
-            if (it.width >= shareImageWidth) {
-                shareImageWidth = it.width
+            if (it.width > shareImageWidth) {
+                width = it.width
             }
         }
+        shareImageWidth += width
 
         val innerH = title?.let {
             (padding * 2 + userFontSize + lineSpace + lrcFontSize * lrcRows + (lrcRows - 1) * lrcLineSpace)
@@ -79,6 +81,9 @@ class SkikoUtil {
         surface.canvas.apply {
             //画背景
             for (x in 0 until ceil(h / 100).toInt()) {
+                for (y in 0 until ceil(shareImageWidth / 1080).toInt()){
+                    drawImage(miImage, (y * 1080).toFloat(), (x * 100).toFloat())
+                }
                 drawImage(miImage, 0F, (x * 100).toFloat())
             }
 

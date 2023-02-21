@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service
  * @Description
  **/
 @Service
-@Command("位置", "")
+@Command("位置", "","查看当前的位置")
 class Position : GameCommandService, DependenceService() {
     override fun group(sender: Long, group: Long, message: String): String {
         val senderInfo = accountService.info(sender)
@@ -49,7 +49,7 @@ class Position : GameCommandService, DependenceService() {
             keys?.forEach {
                 val id = it.replace(key, "").toInt()
                 val boss = bossService.getById(id)
-                sb.append("\n").append("${boss.level}级${boss.name}")
+                sb.append("\n").append("ID:${boss.id} ${boss.level}级${boss.name}")
             }
         }
         return sb.toString()

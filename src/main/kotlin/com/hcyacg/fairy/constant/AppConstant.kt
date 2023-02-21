@@ -18,6 +18,9 @@ class AppConstant {
         val WORLD_MAP_UNSAFE = 0
 
         val BOSS_WORLD_MAP = "boss:live:"
+
+        val COMMAND_DESCRIPTION: MutableMap<String, String> = mutableMapOf()
+
     }
 
 

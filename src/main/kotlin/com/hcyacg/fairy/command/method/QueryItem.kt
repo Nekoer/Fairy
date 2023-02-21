@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service
  * @Description
  **/
 @Service
-@Command("","查询物品 [a-zA-Z0-9_\u4e00-\u9fa5]+")
+@Command("","查询物品 [a-zA-Z0-9_\u4e00-\u9fa5]+","查询物品的属性")
 class QueryItem : GameCommandService, DependenceService(){
     override fun group(sender: Long, group: Long, message: String): String {
         val name = message.replace("查询物品 ", "")

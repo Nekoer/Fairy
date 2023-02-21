@@ -26,7 +26,7 @@ class BossTask: DependenceService() {
     /**
      * 每10分钟在地图上生成一个怪物
      */
-    @Scheduled(cron = "* 0/10 * * * ? ")
+    @Scheduled(initialDelay = 10 * 60 * 1000,fixedRate  = 10 * 60 * 1000)
     fun generateBoss(){
         val boss = bossService.randomBoss()
         val list = worldMapService.getUnSafeWorldMap()

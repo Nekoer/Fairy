@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service
  * @Description
  **/
 @Service
-@Command("背包","")
+@Command("背包","","查看背包")
 class Backpack: GameCommandService, DependenceService() {
     override fun group(sender: Long, group: Long, message: String): String {
         val senderInfo = accountService.info(sender)

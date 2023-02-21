@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service
  * @Description
  **/
 @Service
-@Command("","移动 [上|下|左|右]")
+@Command("","移动 [上|下|左|右]","移动位置,境界到达一定程度、使用传送石均可瞬移")
 class MoveWay: GameCommandService, DependenceService() {
     override fun group(sender: Long, group: Long, message: String): String {
         val direction = message.replace("移动 ","")
@@ -72,7 +72,7 @@ class MoveWay: GameCommandService, DependenceService() {
             keys?.forEach {
                 val id = it.replace(key,"").toInt()
                 val boss = bossService.getById(id)
-                sb.append("\n").append("${boss.level}级${boss.name}")
+                sb.append("\n").append("ID:${boss.id} ${boss.level}级${boss.name}")
             }
         }
 

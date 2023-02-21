@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service
  * @Description
  **/
 @Service
-@Command("我的修仙信息","")
+@Command("我的修仙信息","","查看自己的修仙信息")
 class Info : GameCommandService, DependenceService() {
 
     override fun group(sender: Long, group: Long, message: String): String {
