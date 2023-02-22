@@ -23,13 +23,15 @@ data class Account(
     val id: Long,
     val uin: Long,
     var exp: Long, // 拥有的经验值
+    var level: Long, // 等级
     var point: BigDecimal, //点数 只能充值
     @TableField("ling_root_id")
     val lingRootId: Long, //灵根
     @TableField("ethnicity_id")
     val ethnicityId: Long, //种族
     @TableField("world_map_id")
-    var worldMapId: Long //位置
+    var worldMapId: Long, //位置
+    var probability:Long, //突破概率
 ) {
     constructor(
         uin: Long,
@@ -38,7 +40,7 @@ data class Account(
         lingRootId: Long,
         ethnicityId: Long,
         worldMapId: Long
-    ) : this(0, uin, exp, point, lingRootId, ethnicityId, worldMapId) {
+    ) : this(0, uin, exp,1, point, lingRootId, ethnicityId, worldMapId,100) {
 
     }
 }

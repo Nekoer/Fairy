@@ -7,6 +7,7 @@ import com.hcyacg.fairy.entity.LingRoot
 import lombok.AllArgsConstructor
 import lombok.Data
 import lombok.NoArgsConstructor
+import kotlin.math.ceil
 
 /**
  * @Author Nekoer
@@ -21,22 +22,41 @@ data class AccountDTO(
     val lingRoot: LingRoot, //灵根
     val ethnicity: Ethnicity, //种族
     val level: Hierarchical,  //当前级别
-    val upgrade:Hierarchical, // 下一个级别
+    val upgrade:Hierarchical?, // 下一个级别
     val health: Long,//生命值
     val mana: Long ,//法力
     val attack: Long, //攻击力
     val defensive: Long, //防御力
 ) {
     fun toMessageString():String{
-        return "等级: ${level.level}".plus("\n")
-            .plus("境界: ${level.name}").plus("\n")
-            .plus("种族: ${ethnicity.name}").plus("\n")
-            .plus("灵根: ${lingRoot.name}").plus("\n")
-            .plus("经验值: ${account.exp}/${upgrade.exp}").plus("\n")
-            .plus("生命值: $health").plus("\n")
-            .plus("法力: $mana").plus("\n")
-            .plus("攻击力: $attack").plus("\n")
-            .plus("防御力: $defensive").plus("\n")
-            .plus("充值点数: ${account.point}")
+        val sb = StringBuffer()
+        sb.append("等级: ${level.level}").append("\n")
+            .append("境界: ${level.name}").append("\n")
+            .append("种族: ${ethnicity.name}").append("\n")
+            .append("灵根: ${lingRoot.name}").append("\n")
+            .append("修为: ${account.exp}/${upgrade?.exp ?: "位面至高"}")
+
+        //TODO("后期需加上可突破率")
+        if (upgrade == null){
+            sb.append("\n")
+        }else{
+            if (account.exp >= upgrade.exp){
+                sb.append(" 可突破率${levelUp()}%").append("\n")
+            }else{
+                sb.append("\n")
+            }
+        }
+
+        sb.append("生命值: $health").append("\n")
+            .append("法力: $mana").append("\n")
+            .append("攻击力: $attack").append("\n")
+            .append("防御力: $defensive").append("\n")
+            .append("充值点数: ${account.point}")
+        return sb.toString()
+    }
+
+    //突破的概率
+    fun levelUp():Long{
+        return ceil((100 * ((account.probability + level.probability) / 100)) * 0.75).toLong()
     }
 }

@@ -24,5 +24,5 @@ data class Hierarchical(
     val mana: Long, //法力
     val attack: Long, //攻击力
     val defensive: Long, //防御力
-
+    val probability: Long, //突破概率
 )

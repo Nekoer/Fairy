@@ -49,14 +49,26 @@ class FightSystem : GameCommandService, DependenceService(){
             if (it.contains(key.plus(bossId))){
                 val boss = bossService.getById(bossId)
 
+                //怪物和玩家同时无法破甲 双方都打不出伤害，这时可能会进入无限循环
+                if (boss.attack <= senderInfo.defensive && senderInfo.attack <= boss.defensive){
+                    return "您和${boss.name}都拿对手无可奈何,双双离去~"
+                }
+
                 //TODO 还没有计算boss和玩家的增益属性 以及使用道具
                 val fight = fightToBoss(senderInfo,boss)
+
                 //等待多线程结束
                 CompletableFuture.allOf(fight).join()
                 if(fight.get()){
                     //胜利
-                    sb.append("恭喜您战斗成功")
+
                     redisUtil.del(key.plus(bossId))
+                    senderInfo.account.exp = senderInfo.account.exp + boss.victoryExp(senderInfo.level.level)
+                    if (accountService.updateById(senderInfo.account)){
+                        sb.append("恭喜您战斗成功,获得经验${boss.victoryExp(senderInfo.level.level)}")
+                    }else{
+                        sb.append("恭喜您战斗成功,但是数据更新失败")
+                    }
                 }else{
                     //失败
                     sb.append("非常抱歉,你打不过${boss.name}反而被${boss.name}打死了,您将在附近的传送点复活")

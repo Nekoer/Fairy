@@ -84,8 +84,12 @@ class AccountServiceImpl  : ServiceImpl<AccountMapper, Account>(), AccountServic
             account?.let {
                 val lingRoot = lingRootService.getById(account.lingRootId)
                 val ethnicity = ethnicityService.getById(account.ethnicityId)
-                var hierarchical: Hierarchical = hierarchicalService.getById(1)
-                var upgrade: Hierarchical = hierarchicalService.getById(2)
+                val hierarchical: Hierarchical = hierarchicalService.getById(it.level)
+
+                var upgrade: Hierarchical? = null
+                if (it.level < hierarchicalService.count()){
+                    upgrade = hierarchicalService.getById(it.level+1)
+                }
                 var health = 0L//生命值
                 var mana = 0L //法力
                 var attack = 0L //攻击力
@@ -94,15 +98,13 @@ class AccountServiceImpl  : ServiceImpl<AccountMapper, Account>(), AccountServic
                 run outside@{
                     //等级体系 计算 玩家基本数据
                     hierarchicalService.list().forEachIndexed { index, h ->
+                        if (h.level > account.level){
+                            return@outside
+                        }
                         health += h.health
                         mana += h.mana
                         attack += h.attack
                         defensive += h.defensive
-                        if (h.exp >= account.exp) {
-                            hierarchical = h
-                            upgrade = hierarchicalService.getById(index + 1)
-                            return@outside
-                        }
                     }
                 }
                 //TODO 计算玩家装备等数据
