@@ -50,7 +50,7 @@ class WebSocketMessageHandler : SimpleChannelInboundHandler<WebSocketFrame>() {
 //    }
     companion object {
         var users: ChannelGroup = DefaultChannelGroup(GlobalEventExecutor.INSTANCE)
-        var groups = mutableListOf<Long>()
+        var groups = mutableListOf<Long>(104967737)
     }
 
     @Autowired
@@ -123,7 +123,7 @@ class WebSocketMessageHandler : SimpleChannelInboundHandler<WebSocketFrame>() {
 
                                 group?.let {
                                     if (!groups.contains(group)){
-                                        groups.add(group)
+//                                        groups.add(group)
                                     }
 
                                     sender?.let {

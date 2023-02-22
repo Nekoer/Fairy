@@ -4,6 +4,7 @@ import com.hcyacg.fairy.constant.AppConstant
 import com.hcyacg.fairy.utils.SpringBeanUtil
 import lombok.extern.slf4j.Slf4j
 import org.slf4j.LoggerFactory
+import org.springframework.aop.support.AopUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import java.util.*
@@ -34,16 +35,17 @@ class GameContext {
         )
         Arrays.stream(rpcBeans).toList()
             .forEach { name ->
+                log.debug("name:{}", name)
+                val bean = springBeanUtil.getApplicationContext().getBean(name)
+                var clazz: Class<*> = bean.javaClass
+                log.debug("clazz -> {}",clazz.name)
+                var serviceType: Command?
                 try {
-                    log.debug("name:{}", name)
-                    val bean = springBeanUtil.getApplicationContext().getBean(name)
-                    val clazz: Class<*> = bean.javaClass
-                    log.debug("clazz -> {}",clazz.name)
-                    val serviceType = clazz.getAnnotation(Command::class.java)
+                    serviceType = clazz.getAnnotation(Command::class.java)
 
-                    if (serviceType.type.isNotBlank()) {
-                        commandType.add(serviceType.type)
-                        AppConstant.COMMAND_DESCRIPTION[serviceType.type] = serviceType.description
+                    if (serviceType.command.isNotBlank()) {
+                        commandType.add(serviceType.command)
+                        AppConstant.COMMAND_DESCRIPTION[serviceType.command] = serviceType.description
                     }
                     if (serviceType.regex.isNotBlank()) {
                         commandRegex.add(serviceType.regex)
@@ -53,7 +55,21 @@ class GameContext {
 
                     serviceMap[serviceType] = bean as GameCommandService
                 }catch (_:Exception){
+                    //获取JDK动态代理对象
+                    clazz = AopUtils.getTargetClass(bean)
+                    serviceType = clazz.getAnnotation(Command::class.java)
 
+                    if (serviceType.command.isNotBlank()) {
+                        commandType.add(serviceType.command)
+                        AppConstant.COMMAND_DESCRIPTION[serviceType.command] = serviceType.description
+                    }
+                    if (serviceType.regex.isNotBlank()) {
+                        commandRegex.add(serviceType.regex)
+                        AppConstant.COMMAND_DESCRIPTION[serviceType.regex.split(" ")[0]] = serviceType.description
+                    }
+
+
+                    serviceMap[serviceType] = bean as GameCommandService
                 }
             }
     }
@@ -68,13 +84,13 @@ class GameContext {
     fun getInstance(type: String): GameCommandService? {
         var service: GameCommandService? = null
         serviceMap.forEach { (t, u) ->
-            log.debug("type: {},regex : {}", t.type, t.regex)
+            log.debug("command: {},regex : {}", t.command, t.regex)
             if (t.regex.isNotBlank()) {
                 if (Regex(t.regex).matches(type)) {
                     service = u
                 }
             } else {
-                if (t.type.contentEquals(type)) {
+                if (t.command.contentEquals(type)) {
                     service = u
                 }
             }

@@ -11,7 +11,7 @@ import java.lang.annotation.Inherited
 @Retention(AnnotationRetention.RUNTIME)
 @Inherited
 annotation class Command(
-    val type: String,
+    val command: String,
     val regex: String,
     val description: String
 )
