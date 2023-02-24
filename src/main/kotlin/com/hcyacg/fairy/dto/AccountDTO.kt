@@ -45,7 +45,7 @@ data class AccountDTO(
             .append("境界: ${level.name}").append("\n")
             .append("种族: ${ethnicity.name}").append("\n")
             .append("灵根: ${lingRoot.name}").append("\n")
-            .append("修为: ${account.exp}/${upgrade?.exp ?: "位面至高"}")
+            .append("修为: ${account.exp} / ${upgrade?.exp ?: "位面至高"}")
 
         //TODO("后期需加上可突破率")
         if (upgrade == null) {
@@ -62,8 +62,8 @@ data class AccountDTO(
             sb.append("功法: ${it.name} (${it.skillful}%)").append("\n")
         }
 
-        sb.append("生命值: $health/$maxHealth (${if (healthAddition > 0) "+$healthAddition" else healthAddition})").append("\n")
-            .append("法力: $mana/$maxMana(${if (manaAddition > 0) "+$manaAddition" else manaAddition})").append("\n")
+        sb.append("生命值: $health / $maxHealth (${if (healthAddition > 0) "+$healthAddition" else healthAddition})").append("\n")
+            .append("法力: $mana / $maxMana (${if (manaAddition > 0) "+$manaAddition" else manaAddition})").append("\n")
             .append("攻击力: $attack (${if (attackAddition > 0) "+$attackAddition" else attackAddition})").append("\n")
             .append("防御力: $defensive (${if (defensiveAddition > 0) "+$defensiveAddition" else defensiveAddition})").append("\n")
             .append("充值点数: ${account.point}")
