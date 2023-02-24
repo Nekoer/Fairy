@@ -15,6 +15,8 @@ import org.springframework.data.redis.core.RedisCallback
 import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
 import java.util.concurrent.CompletableFuture
+import kotlin.math.abs
+import kotlin.math.ceil
 
 /**
  * @Author Nekoer
@@ -70,22 +72,30 @@ class FightSystem : GameCommandService, DependenceService(){
                     val sb = StringBuffer()
                     accountExercise?.let {
                         // 总熟练度不能超过100
-                        val bossExercise = 1
+                        // 击败boss所提升的技能熟练度
+                        val level = boss.level - accountDTO.level.level
+                        val bossExercise = if (level > 0){
+                            (level * 0.5) + level
+                        } else {
+                            //取负值的绝对值
+                            abs(level * 0.25)
+                        }
+                        val skillful = ceil(bossExercise * accountExercise.skillful).toLong()
 
                         if (accountExercise.skillful < 100){
-                            if (accountExercise.skillful + bossExercise >= 100){
+                            if (accountExercise.skillful + skillful >= 100){
                                 accountExercise.skillful = 100
                                 if (!accountExerciseService.updateById(accountExercise)){
                                     return "技能熟练度更新失败"
                                 }else {
-                                    sb.append(",${exerciseService.getById(accountExercise.exerciseId).name}技能熟练度增加了${bossExercise}%")
+                                    sb.append(",${exerciseService.getById(accountExercise.exerciseId).name}技能熟练度增加了${skillful}%")
                                 }
                             }else {
-                                accountExercise.skillful += bossExercise
+                                accountExercise.skillful += skillful
                                 if (!accountExerciseService.updateById(accountExercise)){
                                     return "技能熟练度更新失败"
                                 }else {
-                                    sb.append(",${exerciseService.getById(accountExercise.exerciseId).name}技能熟练度增加了${bossExercise}%")
+                                    sb.append(",${exerciseService.getById(accountExercise.exerciseId).name}技能熟练度增加了${skillful}%")
                                 }
                             }
                         }
