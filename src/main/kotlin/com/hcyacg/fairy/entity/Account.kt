@@ -24,6 +24,10 @@ data class Account(
     val uin: Long,
     var exp: Long, // 拥有的经验值
     var level: Long, // 等级
+    @TableField("subtract_health")
+    var subtractHealth:Long, // 扣除的血量
+    @TableField("subtract_mana")
+    var subtractMana:Long, // 扣除的法力
     var point: BigDecimal, //点数 只能充值
     @TableField("ling_root_id")
     val lingRootId: Long, //灵根
@@ -42,7 +46,7 @@ data class Account(
         lingRootId: Long,
         ethnicityId: Long,
         worldMapId: Long
-    ) : this(0, uin, exp,1, point, lingRootId, ethnicityId, worldMapId,100,null) {
+    ) : this(0, uin, exp,1,0,0, point, lingRootId, ethnicityId, worldMapId,100,null) {
 
     }
 }

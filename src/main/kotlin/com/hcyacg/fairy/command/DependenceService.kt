@@ -56,4 +56,9 @@ class DependenceService {
     lateinit var accountExerciseService: AccountExerciseService
     @Autowired
     lateinit var exerciseService: ExerciseService
+
+    @Autowired
+    lateinit var bossUsageService: BossUsageService
+    @Autowired
+    lateinit var bossItemService: BossItemService
 }

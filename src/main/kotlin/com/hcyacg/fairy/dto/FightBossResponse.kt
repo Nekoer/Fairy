@@ -14,5 +14,6 @@ import lombok.NoArgsConstructor
 @NoArgsConstructor
 data class FightBossResponse (
     val victory : Boolean,
-    val process : StringBuffer
+    val process : StringBuffer,
+    val accountHealth: Long
 )

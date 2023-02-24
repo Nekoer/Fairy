@@ -5,6 +5,8 @@ import com.hcyacg.fairy.entity.Exercise
 import lombok.AllArgsConstructor
 import lombok.Data
 import lombok.NoArgsConstructor
+import java.math.BigDecimal
+import java.math.RoundingMode
 
 /**
  * @Author Nekoer
@@ -20,17 +22,17 @@ data class AccountExerciseDTO(
 ) {
     //计算熟练度 功法属性
     fun calculation(): ExerciseDTO {
-        val healthBuff = (accountExercise.skillful / 100) + exercise.healthBuff
-        val manaBuff = (accountExercise.skillful / 100) + exercise.manaBuff
-        val attackBuff = (accountExercise.skillful / 100) + exercise.attackBuff
-        val defensiveBuff = (accountExercise.skillful / 100) + exercise.defensiveBuff
+        val healthBuff = (BigDecimal.valueOf(accountExercise.skillful).divide(BigDecimal.valueOf(100),2,RoundingMode.HALF_UP)).add(BigDecimal.valueOf(exercise.healthBuff))
+        val manaBuff = (BigDecimal.valueOf(accountExercise.skillful).divide(BigDecimal.valueOf(100),2,RoundingMode.HALF_UP)).add(BigDecimal.valueOf(exercise.manaBuff))
+        val attackBuff = (BigDecimal.valueOf(accountExercise.skillful).divide(BigDecimal.valueOf(100),2,RoundingMode.HALF_UP)).add(BigDecimal.valueOf(exercise.attackBuff))
+        val defensiveBuff = (BigDecimal.valueOf(accountExercise.skillful).divide(BigDecimal.valueOf(100),2,RoundingMode.HALF_UP)).add(BigDecimal.valueOf(exercise.defensiveBuff))
         return ExerciseDTO(
             exercise.id,
             exercise.name,
-            healthBuff,
-            manaBuff,
-            attackBuff,
-            defensiveBuff,
+            healthBuff.toDouble(),
+            manaBuff.toDouble(),
+            attackBuff.toDouble(),
+            defensiveBuff.toDouble(),
             exercise.maxLevel,
             accountExercise.skillful
         )

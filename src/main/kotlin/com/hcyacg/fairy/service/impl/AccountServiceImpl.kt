@@ -128,14 +128,20 @@ class AccountServiceImpl : ServiceImpl<AccountMapper, Account>(), AccountService
                 var manaAddition: Long = 0
                 var attackAddition: Long = 0
                 var defensiveAddition: Long = 0
-                //计算功法加成
-                exerciseDTO?.let {
-                    healthAddition = ceil(it.healthBuff * health).toLong()
-                    manaAddition = ceil(it.manaBuff * mana).toLong()
-                    attackAddition = ceil(it.attackBuff * attack).toLong()
-                    defensiveAddition = ceil(it.defensiveBuff * defensive).toLong()
+                //计算功法加成 熟练度
+                exerciseDTO?.let { exercise ->
+                    healthAddition = ceil(exercise.healthBuff * health).toLong()
+                    manaAddition = ceil(exercise.manaBuff * mana).toLong()
+                    attackAddition = ceil(exercise.attackBuff * attack).toLong()
+                    defensiveAddition = ceil(exercise.defensiveBuff * defensive).toLong()
                 }
                 //TODO 计算玩家装备等数据
+
+
+                //减去扣除的血量和法力
+                health -= it.subtractHealth
+                mana -= it.subtractMana
+
 
                 AccountDTO(
                     account,
@@ -151,7 +157,9 @@ class AccountServiceImpl : ServiceImpl<AccountMapper, Account>(), AccountService
                     healthAddition,
                     manaAddition,
                     attackAddition,
-                    defensiveAddition
+                    defensiveAddition,
+                    health + healthAddition + it.subtractHealth,
+                    mana + manaAddition + it.subtractMana
                 )
             }
         } catch (e: Exception) {

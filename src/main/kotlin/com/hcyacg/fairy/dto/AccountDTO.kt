@@ -24,7 +24,7 @@ data class AccountDTO(
     val level: Hierarchical,  //当前级别
     val upgrade: Hierarchical?, // 下一个级别
     val exerciseDTO: ExerciseDTO?, //功法属性
-    val health: Long,//生命值
+    var health: Long,//生命值
     val mana: Long,//法力
     val attack: Long, //攻击力
     val defensive: Long, //防御力
@@ -34,21 +34,10 @@ data class AccountDTO(
     val manaAddition: Long,
     val attackAddition: Long,
     val defensiveAddition: Long,
+
+    val maxHealth : Long,
+    val maxMana : Long,
 ) {
-
-    constructor(
-        account: Account,
-        lingRoot: LingRoot, //灵根
-        ethnicity: Ethnicity, //种族
-        level: Hierarchical,  //当前级别
-        upgrade: Hierarchical?, // 下一个级别
-        health: Long,//生命值
-        mana: Long,//法力
-        attack: Long, //攻击力
-        defensive: Long, //防御力
-    ) : this(account, lingRoot, ethnicity, level, upgrade, null, health, mana, attack, defensive,0,0,0,0) {
-
-    }
 
     fun toMessageString(): String {
         val sb = StringBuffer()
@@ -73,8 +62,8 @@ data class AccountDTO(
             sb.append("功法: ${it.name} (${it.skillful}%)").append("\n")
         }
 
-        sb.append("生命值: $health (${if (healthAddition > 0) "+$healthAddition" else healthAddition})").append("\n")
-            .append("法力: $mana (${if (manaAddition > 0) "+$manaAddition" else manaAddition})").append("\n")
+        sb.append("生命值: $health/$maxHealth (${if (healthAddition > 0) "+$healthAddition" else healthAddition})").append("\n")
+            .append("法力: $mana/$maxMana(${if (manaAddition > 0) "+$manaAddition" else manaAddition})").append("\n")
             .append("攻击力: $attack (${if (attackAddition > 0) "+$attackAddition" else attackAddition})").append("\n")
             .append("防御力: $defensive (${if (defensiveAddition > 0) "+$defensiveAddition" else defensiveAddition})").append("\n")
             .append("充值点数: ${account.point}")
