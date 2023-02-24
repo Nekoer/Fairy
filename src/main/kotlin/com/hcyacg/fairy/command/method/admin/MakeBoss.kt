@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service
  * @Description
  **/
 @Service
-@Command("生成boss","","生成boss")
+@Command("生成boss","","生成boss",true)
 class MakeBoss : GameCommandService, DependenceService(){
     @Autowired
     private lateinit var bossTask: BossTask

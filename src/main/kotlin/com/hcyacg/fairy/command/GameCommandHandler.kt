@@ -30,6 +30,10 @@ class GameCommandHandler : DependenceService() {
         if (!gameContext.isCommand(message)) {
             return
         }
+        //是否需要管理员权限 并且发送人是否是管理员
+        if (gameContext.isNeedAdmin(message) && sender != 243462032L){
+            return
+        }
 
 
         //群消息

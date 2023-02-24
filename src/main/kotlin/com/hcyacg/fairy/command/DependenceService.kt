@@ -52,4 +52,8 @@ class DependenceService {
     lateinit var bossService: BossService
     @Autowired
     lateinit var redisUtil: RedisUtil
+    @Autowired
+    lateinit var accountExerciseService: AccountExerciseService
+    @Autowired
+    lateinit var exerciseService: ExerciseService
 }

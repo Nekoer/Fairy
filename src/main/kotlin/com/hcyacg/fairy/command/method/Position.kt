@@ -4,6 +4,7 @@ import com.hcyacg.fairy.command.Command
 import com.hcyacg.fairy.command.DependenceService
 import com.hcyacg.fairy.command.GameCommandService
 import com.hcyacg.fairy.constant.AppConstant
+import com.hcyacg.fairy.dto.Architecture
 import org.springframework.data.redis.core.Cursor
 import org.springframework.data.redis.core.KeyScanOptions
 import org.springframework.data.redis.core.RedisCallback
@@ -35,7 +36,7 @@ class Position : GameCommandService, DependenceService() {
         })
 
         val sb = StringBuffer()
-        sb.append("您当前在${pos.now.name}").append("\n")
+        sb.append("您当前在${pos.now.name}(${Architecture.getArchitectureById(pos.now.architectureId).value})").append("\n")
             .append("上:${pos.top?.name ?: "道路不通"}").append("\n")
             .append("下:${pos.bottom?.name ?: "道路不通"}").append("\n")
             .append("左:${pos.left?.name ?: "道路不通"}").append("\n")

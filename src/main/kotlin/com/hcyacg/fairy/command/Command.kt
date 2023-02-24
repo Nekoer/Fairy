@@ -13,5 +13,6 @@ import java.lang.annotation.Inherited
 annotation class Command(
     val command: String,
     val regex: String,
-    val description: String
+    val description: String,
+    val isAdmin: Boolean = false
 )

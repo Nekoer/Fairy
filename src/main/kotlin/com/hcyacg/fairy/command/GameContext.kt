@@ -21,6 +21,7 @@ class GameContext {
     private val serviceMap: MutableMap<Command, GameCommandService> = HashMap<Command, GameCommandService>()
     private val commandType: MutableList<String> = mutableListOf()
     private val commandRegex: MutableList<String> = mutableListOf()
+    private val adminCommandList: MutableList<Command> = mutableListOf()
     private val log = LoggerFactory.getLogger(this::class.java)
 
     /**
@@ -50,6 +51,10 @@ class GameContext {
                     if (serviceType.regex.isNotBlank()) {
                         commandRegex.add(serviceType.regex)
                         AppConstant.COMMAND_DESCRIPTION[serviceType.regex.split(" ")[0]] = serviceType.description
+                    }
+
+                    if (serviceType.isAdmin){
+                        adminCommandList.add(serviceType)
                     }
 
 
@@ -100,6 +105,18 @@ class GameContext {
     }
 
     fun isCommand(command: String): Boolean {
+        if (commandType.contains(command)) {
+            return true
+        }
+        commandRegex.forEach {
+            if (Regex(it).matches(command)) {
+                return true
+            }
+        }
+        return false
+    }
+
+    fun isNeedAdmin(command: String):Boolean{
         if (commandType.contains(command)) {
             return true
         }

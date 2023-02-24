@@ -32,6 +32,8 @@ data class Account(
     @TableField("world_map_id")
     var worldMapId: Long, //位置
     var probability:Long, //突破概率
+    @TableField("account_exercise_id")
+    val accountExerciseId: Long?
 ) {
     constructor(
         uin: Long,
@@ -40,7 +42,7 @@ data class Account(
         lingRootId: Long,
         ethnicityId: Long,
         worldMapId: Long
-    ) : this(0, uin, exp,1, point, lingRootId, ethnicityId, worldMapId,100) {
+    ) : this(0, uin, exp,1, point, lingRootId, ethnicityId, worldMapId,100,null) {
 
     }
 }

@@ -22,8 +22,9 @@ enum class Usage(
      */
     UNKNOWN(-1, "未知","未知"),
     BLOOD_RETURN(1,"血量回复","恢复玩家的血量"),
-    MANA_RETURN(2,"法力回复","恢复玩家的法力");
-
+    MANA_RETURN(2,"法力回复","恢复玩家的法力"),
+    EXPERIENCE_ADD(3,"经验增加","给予玩家一定的经验"),
+    EXPERIENCE_REDUCE(4,"经验减少","扣除玩家一定的经验");
 
     companion object {
         private val codeMap = values().associateBy { it.id }

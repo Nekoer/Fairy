@@ -3,6 +3,7 @@ package com.hcyacg.fairy.service.impl
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl
 import com.hcyacg.fairy.dto.AccountDTO
+import com.hcyacg.fairy.dto.ExerciseDTO
 import com.hcyacg.fairy.entity.Account
 import com.hcyacg.fairy.entity.Hierarchical
 import com.hcyacg.fairy.mapper.AccountMapper
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.math.BigDecimal
+import kotlin.math.ceil
 
 /**
  * @Author Nekoer
@@ -26,17 +28,25 @@ import java.math.BigDecimal
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @Transactional(rollbackFor = [Exception::class])
-class AccountServiceImpl  : ServiceImpl<AccountMapper, Account>(), AccountService {
+class AccountServiceImpl : ServiceImpl<AccountMapper, Account>(), AccountService {
     @Autowired
     private lateinit var hierarchicalService: HierarchicalService
+
     @Autowired
     private lateinit var lingRootService: LingRootService
+
     @Autowired
     private lateinit var signService: SignService
+
     @Autowired
     private lateinit var ethnicityService: EthnicityService
+
     @Autowired
     private lateinit var accountPackageService: AccountPackageService
+
+    @Autowired
+    lateinit var accountExerciseService: AccountExerciseService
+
     override fun register(
         uin: Long,
         isRebirth: Boolean
@@ -45,7 +55,7 @@ class AccountServiceImpl  : ServiceImpl<AccountMapper, Account>(), AccountServic
 
             if (!isRebirth) {
 
-                if (getOne(QueryWrapper<Account>().eq("uin",uin)) != null) {
+                if (getOne(QueryWrapper<Account>().eq("uin", uin)) != null) {
                     log.debug("用户已注册")
                     return false
                 }
@@ -80,15 +90,21 @@ class AccountServiceImpl  : ServiceImpl<AccountMapper, Account>(), AccountServic
 
     override fun info(uin: Long): AccountDTO? {
         return try {
-            val account = getOne(QueryWrapper<Account>().eq("uin",uin))
-            account?.let {
+            val account = getOne(QueryWrapper<Account>().eq("uin", uin))
+            account?.let { it ->
                 val lingRoot = lingRootService.getById(account.lingRootId)
                 val ethnicity = ethnicityService.getById(account.ethnicityId)
                 val hierarchical: Hierarchical = hierarchicalService.getById(it.level)
 
+                var exerciseDTO: ExerciseDTO? = null
+                it.accountExerciseId?.let { id ->
+                    val accountExerciseDTO = accountExerciseService.accountExercise(id, account.id)
+                    exerciseDTO = accountExerciseDTO.calculation()
+                }
+
                 var upgrade: Hierarchical? = null
-                if (it.level < hierarchicalService.count()){
-                    upgrade = hierarchicalService.getById(it.level+1)
+                if (it.level < hierarchicalService.count()) {
+                    upgrade = hierarchicalService.getById(it.level + 1)
                 }
                 var health = 0L//生命值
                 var mana = 0L //法力
@@ -98,7 +114,7 @@ class AccountServiceImpl  : ServiceImpl<AccountMapper, Account>(), AccountServic
                 run outside@{
                     //等级体系 计算 玩家基本数据
                     hierarchicalService.list().forEachIndexed { index, h ->
-                        if (h.level > account.level){
+                        if (h.level > account.level) {
                             return@outside
                         }
                         health += h.health
@@ -106,6 +122,18 @@ class AccountServiceImpl  : ServiceImpl<AccountMapper, Account>(), AccountServic
                         attack += h.attack
                         defensive += h.defensive
                     }
+                }
+
+                var healthAddition: Long = 0
+                var manaAddition: Long = 0
+                var attackAddition: Long = 0
+                var defensiveAddition: Long = 0
+                //计算功法加成
+                exerciseDTO?.let {
+                    healthAddition = ceil(it.healthBuff * health).toLong()
+                    manaAddition = ceil(it.manaBuff * mana).toLong()
+                    attackAddition = ceil(it.attackBuff * attack).toLong()
+                    defensiveAddition = ceil(it.defensiveBuff * defensive).toLong()
                 }
                 //TODO 计算玩家装备等数据
 
@@ -115,10 +143,15 @@ class AccountServiceImpl  : ServiceImpl<AccountMapper, Account>(), AccountServic
                     ethnicity,
                     hierarchical,
                     upgrade,
-                    health,
-                    mana,
-                    attack,
-                    defensive
+                    exerciseDTO,
+                    health + healthAddition,
+                    mana + manaAddition,
+                    attack + attackAddition,
+                    defensive + defensiveAddition,
+                    healthAddition,
+                    manaAddition,
+                    attackAddition,
+                    defensiveAddition
                 )
             }
         } catch (e: Exception) {

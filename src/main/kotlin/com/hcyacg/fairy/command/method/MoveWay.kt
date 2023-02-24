@@ -4,6 +4,7 @@ import com.hcyacg.fairy.command.Command
 import com.hcyacg.fairy.command.DependenceService
 import com.hcyacg.fairy.command.GameCommandService
 import com.hcyacg.fairy.constant.AppConstant
+import com.hcyacg.fairy.dto.Architecture
 import com.hcyacg.fairy.dto.MoveDTO
 import org.springframework.data.redis.core.Cursor
 import org.springframework.data.redis.core.KeyScanOptions
@@ -55,7 +56,7 @@ class MoveWay: GameCommandService, DependenceService() {
 
         val sb = StringBuffer()
         if (move.move){
-            sb.append("您已从${move.before.name}移动到${move.after.name}")
+            sb.append("您已从${move.before.name}(${Architecture.getArchitectureById(move.before.architectureId).value})移动到${move.after.name}(${Architecture.getArchitectureById(move.after.architectureId).value})")
         }else {
             sb.append("非常抱歉,前方道路不通~")
         }

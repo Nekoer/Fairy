@@ -5,6 +5,7 @@ import com.hcyacg.fairy.command.DependenceService
 import com.hcyacg.fairy.command.GameCommandService
 import com.hcyacg.fairy.constant.AppConstant
 import com.hcyacg.fairy.dto.AccountDTO
+import com.hcyacg.fairy.dto.FightBossResponse
 import com.hcyacg.fairy.entity.Boss
 import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.EnableAspectJAutoProxy
@@ -27,8 +28,8 @@ class FightSystem : GameCommandService, DependenceService(){
     private val log = LoggerFactory.getLogger(this::class.java)
 
     override fun group(sender: Long, group: Long, message: String): String {
-        val senderInfo = accountService.info(sender)
-        val pos = worldMapService.position(senderInfo!!.account.worldMapId)
+        val accountDTO = accountService.info(sender)
+        val pos = worldMapService.position(accountDTO!!.account.worldMapId)
         val key = "${AppConstant.BOSS_WORLD_MAP}${pos.now.id}:"
 
         val keys = redisTemplate.execute(RedisCallback<Set<String>> { connection ->
@@ -41,7 +42,6 @@ class FightSystem : GameCommandService, DependenceService(){
             }
             return@RedisCallback keysTmp
         })
-        val sb = StringBuffer()
 
         val bossId = message.replace("对战 ","").toInt()
         //选择打哪一只
@@ -50,30 +50,58 @@ class FightSystem : GameCommandService, DependenceService(){
                 val boss = bossService.getById(bossId)
 
                 //怪物和玩家同时无法破甲 双方都打不出伤害，这时可能会进入无限循环
-                if (boss.attack <= senderInfo.defensive && senderInfo.attack <= boss.defensive){
+                if (boss.attack <= accountDTO.defensive && accountDTO.attack <= boss.defensive){
                     return "您和${boss.name}都拿对手无可奈何,双双离去~"
                 }
 
                 //TODO 还没有计算boss和玩家的增益属性 以及使用道具
-                val fight = fightToBoss(senderInfo,boss)
+                val fight = fightToBoss(accountDTO,boss)
 
                 //等待多线程结束
                 CompletableFuture.allOf(fight).join()
-                if(fight.get()){
+                if(fight.get().victory){
                     //胜利
 
                     redisUtil.del(key.plus(bossId))
-                    senderInfo.account.exp = senderInfo.account.exp + boss.victoryExp(senderInfo.level.level)
-                    if (accountService.updateById(senderInfo.account)){
-                        sb.append("恭喜您战斗成功,获得经验${boss.victoryExp(senderInfo.level.level)}")
+                    accountDTO.account.exp = accountDTO.account.exp + boss.victoryExp(accountDTO.level.level)
+
+                    // 添加技能熟练度
+                    val accountExercise = accountExerciseService.getById(accountDTO.account.accountExerciseId)
+                    val sb = StringBuffer()
+                    accountExercise?.let {
+                        // 总熟练度不能超过100
+                        val bossExercise = 1
+
+                        if (accountExercise.skillful < 100){
+                            if (accountExercise.skillful + bossExercise >= 100){
+                                accountExercise.skillful = 100
+                                if (!accountExerciseService.updateById(accountExercise)){
+                                    return "技能熟练度更新失败"
+                                }else {
+                                    sb.append(",${exerciseService.getById(accountExercise.exerciseId).name}技能熟练度增加了${bossExercise}%")
+                                }
+                            }else {
+                                accountExercise.skillful += bossExercise
+                                if (!accountExerciseService.updateById(accountExercise)){
+                                    return "技能熟练度更新失败"
+                                }else {
+                                    sb.append(",${exerciseService.getById(accountExercise.exerciseId).name}技能熟练度增加了${bossExercise}%")
+                                }
+                            }
+                        }
+                    }
+
+
+                    if (accountService.updateById(accountDTO.account)){
+                        fight.get().process.append("\n").append("恭喜您战斗成功,获得${boss.victoryExp(accountDTO.level.level)}点经验").append(sb)
                     }else{
-                        sb.append("恭喜您战斗成功,但是数据更新失败")
+                        fight.get().process.append("\n").append("恭喜您战斗成功,但是数据更新失败")
                     }
                 }else{
                     //失败
-                    sb.append("非常抱歉,你打不过${boss.name}反而被${boss.name}打死了,您将在附近的传送点复活")
+                    fight.get().process.append("\n").append("非常抱歉,你打不过${boss.name}反而被${boss.name}打死了,您将在附近的传送点复活")
                 }
-                return sb.toString()
+                return fight.get().process.toString()
             }else{
                 return "该地区没有ID为${bossId}的boss"
             }
@@ -93,33 +121,41 @@ class FightSystem : GameCommandService, DependenceService(){
     }
 
     @Async("taskExecutor")
-    fun fightToBoss(account:AccountDTO,boss:Boss): CompletableFuture<Boolean> {
+    fun fightToBoss(account:AccountDTO,boss:Boss): CompletableFuture<FightBossResponse> {
         log.debug("玩家属性 => {}",account)
         log.debug("boss属性 => {}",boss)
         var isFightSuccess = false
         var accountHealth = account.health
         var bossHealth = boss.health
+        val sb = StringBuffer()
         while(accountHealth > 0 && !isFightSuccess){
             log.debug("玩家血量: {} boss血量: {}",accountHealth,bossHealth)
             //玩家攻击 大于 怪物防御
+            sb.append("玩家血量: $accountHealth boss血量: $bossHealth").append("\n")
             if (account.attack > boss.defensive){
                 if (bossHealth > 0){
-                    bossHealth -= account.attack - boss.defensive
+                    val damage = account.attack - boss.defensive
+                    bossHealth -= damage
+                    sb.append("您对${boss.name}造成了${damage}点伤害").append("\n")
                 }else {
                     isFightSuccess = true
                 }
             }
 
-            if (boss.attack > account.defensive){
+            //如果未对战胜利 并且怪物的攻击大于玩家的防御
+            if (!isFightSuccess && boss.attack > account.defensive){
+                val damage = boss.attack - account.defensive
                 accountHealth -= boss.attack - account.defensive
+                sb.append("${boss.name}对您造成了${damage}点伤害").append("\n")
             }
 
+            //如果玩家血量归零 对战结束
             if (accountHealth <= 0){
                 isFightSuccess = false
             }
 
         }
 
-        return CompletableFuture.completedFuture(isFightSuccess)
+        return CompletableFuture.completedFuture(FightBossResponse(isFightSuccess,sb))
     }
 }
