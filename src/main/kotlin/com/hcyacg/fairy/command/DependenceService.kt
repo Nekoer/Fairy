@@ -71,4 +71,6 @@ class DependenceService {
     lateinit var walletService: WalletService
     @Autowired
     lateinit var seclusionService: SeclusionService
+    @Autowired
+    lateinit var factionService: FactionService
 }

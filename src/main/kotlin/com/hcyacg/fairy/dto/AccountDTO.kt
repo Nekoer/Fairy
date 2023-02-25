@@ -1,9 +1,6 @@
 package com.hcyacg.fairy.dto
 
-import com.hcyacg.fairy.entity.Account
-import com.hcyacg.fairy.entity.Ethnicity
-import com.hcyacg.fairy.entity.Hierarchical
-import com.hcyacg.fairy.entity.LingRoot
+import com.hcyacg.fairy.entity.*
 import lombok.AllArgsConstructor
 import lombok.Data
 import lombok.NoArgsConstructor
@@ -21,6 +18,7 @@ data class AccountDTO(
     val account: Account,
     val lingRoot: LingRoot, //灵根
     val ethnicity: Ethnicity, //种族
+    val faction: Faction?,
     val level: Hierarchical,  //当前级别
     val upgrade: Hierarchical?, // 下一个级别
     val exerciseDTO: ExerciseDTO?, //功法属性
@@ -45,6 +43,7 @@ data class AccountDTO(
             .append("境界: ${level.name}").append("\n")
             .append("种族: ${ethnicity.name}").append("\n")
             .append("灵根: ${lingRoot.name}").append("\n")
+            .append("宗派: ${faction?.name ?: "未加入宗派"}").append("\n")
             .append("修为: ${account.exp} / ${upgrade?.exp ?: "位面至高"}")
 
         if (upgrade == null) {
