@@ -69,4 +69,6 @@ class DependenceService {
     lateinit var stoneService: StoneService
     @Autowired
     lateinit var walletService: WalletService
+    @Autowired
+    lateinit var seclusionService: SeclusionService
 }
