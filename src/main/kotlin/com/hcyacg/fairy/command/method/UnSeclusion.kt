@@ -34,17 +34,19 @@ class UnSeclusion : GameCommandService, DependenceService(){
                     val exp = (account.account.level + 15) * num
                     account.account.exp += exp
 
-                    if (account.account.subtractHealth - exp < 1){
-                        account.account.subtractHealth = 0
+                    val health = if (account.account.subtractHealth - exp < 1){
+                        0
                     }else{
-                        account.account.subtractHealth -= exp
+                        account.account.subtractHealth - exp
                     }
 
-                    if (account.account.subtractMana - exp < 1){
-                        account.account.subtractMana = 0
+                    val mana = if (account.account.subtractMana - exp < 1){
+                        0
                     }else{
-                        account.account.subtractMana -= exp
+                        account.account.subtractMana - exp
                     }
+                    account.account.subtractHealth = health
+                    account.account.subtractMana = mana
 
                     if (!accountService.updateById(account.account)){
                         throw RuntimeException("出关失败")
@@ -52,7 +54,7 @@ class UnSeclusion : GameCommandService, DependenceService(){
                     if (!seclusionService.removeById(seclusion)){
                         throw RuntimeException("出关失败")
                     }
-                    return "出关成功,本次收益: 修为增加${exp}点,血量和法力回复了${exp}点"
+                    return "出关成功,本次收益: 修为增加${exp}点,血量回复了${health}点,法力回复了${mana}点"
                 }else{
                     if (!seclusionService.removeById(seclusion)){
                         throw RuntimeException("出关失败")
