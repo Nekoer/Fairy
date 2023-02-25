@@ -47,7 +47,6 @@ data class AccountDTO(
             .append("灵根: ${lingRoot.name}").append("\n")
             .append("修为: ${account.exp} / ${upgrade?.exp ?: "位面至高"}")
 
-        //TODO("后期需加上可突破率")
         if (upgrade == null) {
             sb.append("\n")
         } else {

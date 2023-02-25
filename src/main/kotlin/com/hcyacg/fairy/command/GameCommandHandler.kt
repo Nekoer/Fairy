@@ -59,8 +59,6 @@ class GameCommandHandler : DependenceService() {
 
                 message.contentEquals("金银阁") -> {}
                 message.contentEquals("改名xx") -> {}
-                message.contentEquals("突破") -> {}
-                message.contentEquals("直接突破") -> {}
                 message.contentEquals("闭关") -> {}
                 message.contentEquals("出关") -> {}
                 message.contentEquals("灵石出关") -> {}

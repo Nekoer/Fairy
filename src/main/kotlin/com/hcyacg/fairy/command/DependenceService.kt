@@ -61,4 +61,6 @@ class DependenceService {
     lateinit var bossUsageService: BossUsageService
     @Autowired
     lateinit var bossItemService: BossItemService
+    @Autowired
+    lateinit var itemUsageService: ItemUsageService
 }

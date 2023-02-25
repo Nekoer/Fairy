@@ -22,7 +22,7 @@ class Backpack: GameCommandService, DependenceService() {
                 )
                 val sb = StringBuffer()
                 packageList.forEachIndexed { index, accountItem ->
-                    sb.append("${accountItem.item.name} ×${accountItem.quantity}")
+                    sb.append("ID:${accountItem.id} ${accountItem.item.name} ×${accountItem.quantity}")
                     if (packageList.size - 1 != index) {
                         sb.append("\n")
                     }

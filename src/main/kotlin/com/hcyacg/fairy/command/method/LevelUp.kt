@@ -15,38 +15,40 @@ import kotlin.math.ceil
 @Command("突破","","突破等级")
 class LevelUp : GameCommandService, DependenceService(){
     override fun group(sender: Long, group: Long, message: String): String {
-        val accountDTO = accountService.info(sender)
-        accountDTO?.let {
-            if (it.account.exp < it.level.exp){
-                return "您的修为目前还无法支撑您突破当前境界"
-            }
-
-            if (it.upgrade == null){
-                return "您已经是最高境界了"
-            }
-
-
-            if (it.levelUp() > 50){
-                it.account.level = it.upgrade.level
-                it.account.probability -= 2
-                if(accountService.updateById(it.account)){
-                    return "恭喜您突破到了${it.upgrade.name}"
-                }else{
-                    return "恭喜您成功突破境界,但是数据更新错误"
-                }
-            }else{
-                val exp = ceil(it.level.exp * 0.25).toLong()
-                it.account.exp -= exp
-                it.account.probability += 2
-                if(accountService.updateById(it.account)){
-                    return "突破失败,扣除您${exp}的修为"
-                }else{
-                    return "突破失败,但是数据更新错误"
+        try{
+            val accountDTO = accountService.info(sender)
+            accountDTO?.let {
+                if (it.account.exp < it.level.exp){
+                    return "您的修为目前还无法支撑您突破当前境界"
                 }
 
+                if (it.upgrade == null){
+                    return "您已经是最高境界了"
+                }
+
+
+                if (it.levelUp() > 50){
+                    it.account.level = it.upgrade.level
+                    it.account.probability -= 2
+                    if(accountService.updateById(it.account)){
+                        return "恭喜您突破到了${it.upgrade.name}"
+                    }else{
+                        throw RuntimeException("恭喜您成功突破境界,但是数据更新错误")
+                    }
+                }else{
+                    val exp = ceil(it.level.exp * 0.25).toLong()
+                    it.account.exp -= exp
+                    it.account.probability += 2
+                    if(accountService.updateById(it.account)){
+                        return "突破失败,扣除您${exp}的修为"
+                    }else{
+                        throw RuntimeException("突破失败,但是数据更新错误")
+                    }
+                }
             }
+        }catch (e:Exception){
+            e.printStackTrace()
         }
-
         return "目前您无法突破"
     }
 

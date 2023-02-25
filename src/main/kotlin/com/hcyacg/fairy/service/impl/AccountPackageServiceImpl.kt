@@ -60,7 +60,7 @@ class AccountPackageServiceImpl @Autowired constructor(
                     }
                     itemTypeService.getItemTypeById(item.itemTypeId)?.let { itemType ->
                         accountItems.add(AccountItem(
-                            id=item.id,
+                            id=accountPackage.id,
                             accountId=accountId,
                             ItemDTO(
                                 id = item.id,
