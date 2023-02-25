@@ -23,7 +23,9 @@ enum class Architecture(
     BANK(1,"钱庄"),
     HOTEL(2,"旅馆"),
     TRANSFER_POINT(3,"传送点"),
-    SPAWN_POINT(4,"刷怪点");
+    SPAWN_POINT(4,"刷怪点"),
+    AUCTION_HOUSE(5,"拍卖场")
+    ;
 
     companion object {
         private val codeMap = values().associateBy { it.id }

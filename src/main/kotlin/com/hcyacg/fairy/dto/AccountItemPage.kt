@@ -16,6 +16,13 @@ import lombok.NoArgsConstructor
 @AllArgsConstructor
 @NoArgsConstructor
 @Serializable
+data class AccountItemPage(
+    val list: List<AccountItem>,
+    val pages:Long,
+
+)
+
+@Serializable
 data class AccountItem(
     @SerialName("info")
     val id: Long,

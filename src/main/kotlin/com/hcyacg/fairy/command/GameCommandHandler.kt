@@ -57,7 +57,7 @@ class GameCommandHandler : DependenceService() {
             //TODO 下列没有用了,写完各个命令功能就可以删除，目前作为备份
             when {
 
-                message.contentEquals("金银阁") -> {}
+
                 message.contentEquals("改名xx") -> {}
                 message.contentEquals("闭关") -> {}
                 message.contentEquals("出关") -> {}
@@ -66,7 +66,6 @@ class GameCommandHandler : DependenceService() {
                 message.contentEquals("悬赏令帮助") -> {}
                 message.contentEquals("我的状态") -> {}
                 message.contentEquals("宗门系统") -> {}
-                message.contentEquals("灵庄系统") -> {}
                 message.contentEquals("世界BOSS") -> {}
                 message.contentEquals("我的功法") -> {}
                 message.contentEquals("秘境系统") -> {}

@@ -1,7 +1,7 @@
 package com.hcyacg.fairy.service
 
 import com.baomidou.mybatisplus.extension.service.IService
-import com.hcyacg.fairy.dto.AccountItem
+import com.hcyacg.fairy.dto.AccountItemPage
 import com.hcyacg.fairy.entity.AccountPackage
 
 /**
@@ -11,7 +11,6 @@ import com.hcyacg.fairy.entity.AccountPackage
  **/
 interface AccountPackageService : IService<AccountPackage> {
 
-    fun getPackageList(accountId: Long) : List<AccountItem>
-
+    fun getPackagePage(accountId: Long,page:Long) : AccountItemPage?
     fun deleteAccountPackage(accountId: Long): Boolean
 }
