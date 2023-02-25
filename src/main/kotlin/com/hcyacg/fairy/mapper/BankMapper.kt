@@ -1,16 +1,16 @@
 package com.hcyacg.fairy.mapper
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper
-import com.hcyacg.fairy.entity.StoneType
+import com.hcyacg.fairy.entity.Bank
 import org.apache.ibatis.annotations.Mapper
 import org.springframework.stereotype.Repository
 
 /**
  * @Author Nekoer
- * @Date  2/11/2023 20:20
+ * @Date  2/25/2023 12:17
  * @Description
  **/
 @Mapper
 @Repository
-interface StoneTypeMapper : BaseMapper<StoneType> {
+interface BankMapper : BaseMapper<Bank> {
 }

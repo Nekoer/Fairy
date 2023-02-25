@@ -1,6 +1,7 @@
 package com.hcyacg.fairy.entity
 
 import com.baomidou.mybatisplus.annotation.IdType
+import com.baomidou.mybatisplus.annotation.TableField
 import com.baomidou.mybatisplus.annotation.TableId
 import com.baomidou.mybatisplus.annotation.TableName
 import lombok.AllArgsConstructor
@@ -9,15 +10,19 @@ import lombok.NoArgsConstructor
 
 /**
  * @Author Nekoer
- * @Date  2/10/2023 16:46
- * @Description 货币的种类
+ * @Date  2/25/2023 13:09
+ * @Description 个人钱包
  **/
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@TableName("stone_type")
-data class StoneType(
+@TableName("wallet")
+data class Wallet (
     @TableId(type = IdType.AUTO)
-    val id: Int,
-    val name: String
+    val id: Long,
+    @TableField("account_id")
+    val accountId:Long,
+    @TableField("stone_id")
+    val stoneId: Long,
+    var quantity: Long // 数量
 )

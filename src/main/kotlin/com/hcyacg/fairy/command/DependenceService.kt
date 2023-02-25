@@ -63,4 +63,10 @@ class DependenceService {
     lateinit var bossItemService: BossItemService
     @Autowired
     lateinit var itemUsageService: ItemUsageService
+    @Autowired
+    lateinit var bankService: BankService
+    @Autowired
+    lateinit var stoneService: StoneService
+    @Autowired
+    lateinit var walletService: WalletService
 }
