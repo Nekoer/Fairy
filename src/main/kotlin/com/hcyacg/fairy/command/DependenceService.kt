@@ -73,4 +73,8 @@ class DependenceService {
     lateinit var seclusionService: SeclusionService
     @Autowired
     lateinit var factionService: FactionService
+    @Autowired
+    lateinit var factionMissionService: FactionMissionService
+    @Autowired
+    lateinit var accountFactionMissionService: AccountFactionMissionService
 }

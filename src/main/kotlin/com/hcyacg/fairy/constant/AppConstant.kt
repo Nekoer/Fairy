@@ -26,6 +26,13 @@ class AppConstant {
         // 战斗胜利的固定经验
         val EXP_VICTORY = 45L
 
+        //宗门任务状态
+        val FACTION_MISSION_STATE_SUCCESS = 1L //成功
+        val FACTION_MISSION_STATE_CANEL = 2L//取消
+        val FACTION_MISSION_STATE_FAILURE = -1L //失败
+        val FACTION_MISSION_STATE_PROGRESS = 0L //进行中
+
+        val FACTION_MISSION_CD = "faction:mission:"
     }
 
 

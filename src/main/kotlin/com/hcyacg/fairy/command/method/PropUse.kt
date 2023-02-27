@@ -5,7 +5,8 @@ import com.hcyacg.fairy.command.Command
 import com.hcyacg.fairy.command.DependenceService
 import com.hcyacg.fairy.command.GameCommandService
 import com.hcyacg.fairy.dto.Usage
-import com.hcyacg.fairy.dto.Usage.*
+import com.hcyacg.fairy.dto.Usage.BLOOD_RETURN
+import com.hcyacg.fairy.dto.Usage.MANA_RETURN
 import com.hcyacg.fairy.entity.ItemUsage
 import org.springframework.stereotype.Service
 
@@ -46,7 +47,6 @@ class PropUse : GameCommandService, DependenceService(){
                                 }
 
                             }
-                            UNKNOWN -> {}
                             MANA_RETURN -> {
                                 if (account.account.subtractMana == 0L){
                                     return "您的法力是满的"
@@ -60,8 +60,7 @@ class PropUse : GameCommandService, DependenceService(){
                                     buffString.append("您的法力回复了${it.attribute}点").append("\n")
                                 }
                             }
-                            EXPERIENCE_ADD -> {}
-                            EXPERIENCE_REDUCE -> {}
+                            else -> {}
                         }
                     }
 

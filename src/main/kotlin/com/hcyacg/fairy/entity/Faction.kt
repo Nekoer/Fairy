@@ -22,15 +22,15 @@ data class Faction(
     val id: Long,
     val name: String,
     @TableField("own_id")
-    val ownId: Long,
-    val contribution: Long, //贡献值
-    val construction: Long, //建设度
-    val material: Long //资材
+    var ownId: Long,
+    var construction: Long, //建设度
+    var material: Long, //资材
+    var member: Long = 20
 ){
 
     constructor(
         name:String,
         ownId:Long
-    ):this(0,name,ownId, 0, 0, 0)
+    ):this(0,name,ownId, 0, 0, 20)
 
 }

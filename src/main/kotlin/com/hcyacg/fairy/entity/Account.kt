@@ -1,9 +1,6 @@
 package com.hcyacg.fairy.entity
 
-import com.baomidou.mybatisplus.annotation.IdType
-import com.baomidou.mybatisplus.annotation.TableField
-import com.baomidou.mybatisplus.annotation.TableId
-import com.baomidou.mybatisplus.annotation.TableName
+import com.baomidou.mybatisplus.annotation.*
 import lombok.AllArgsConstructor
 import lombok.Data
 import lombok.NoArgsConstructor
@@ -36,8 +33,11 @@ data class Account(
     @TableField("world_map_id")
     var worldMapId: Long, //位置
     var probability:Long, //突破概率
-    @TableField("account_exercise_id")
-    val accountExerciseId: Long?
+    @TableField(value = "account_exercise_id", updateStrategy = FieldStrategy.IGNORED)
+    val accountExerciseId: Long?,
+    @TableField(value = "faction_id", updateStrategy = FieldStrategy.IGNORED)
+    var factionId: Long?,
+    var contribution: Long, //贡献值
 ) {
     constructor(
         uin: Long,
@@ -46,7 +46,7 @@ data class Account(
         lingRootId: Long,
         ethnicityId: Long,
         worldMapId: Long
-    ) : this(0, uin, exp,1,0,0, point, lingRootId, ethnicityId, worldMapId,100,null) {
+    ) : this(0, uin, exp,1,0,0, point, lingRootId, ethnicityId, worldMapId,100,null,null,0) {
 
     }
 }

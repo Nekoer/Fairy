@@ -13,24 +13,37 @@ import org.springframework.stereotype.Service
  * @Description
  **/
 @Service
-@Command("","创建宗派 [a-zA-Z0-9_\u4e00-\u9fa5]+","创建宗派")
+@Command("","创建宗门 [a-zA-Z0-9_\u4e00-\u9fa5]+","创建宗门 宗派名")
 class FactionCreate: GameCommandService, DependenceService() {
     override fun group(sender: Long, group: Long, message: String): String {
-        val name = message.replace("创建宗派 ","")
+        val name = message.replace("创建宗门 ","")
         val account = accountService.info(sender)
         account?.let {
             val one = factionService.getOne(QueryWrapper<Faction>().eq("own_id", account.account.id))
+            val count = factionService.count(QueryWrapper<Faction>().eq("name",name))
+            if (it.account.factionId != null){
+                return "创建宗门失败,您需要退出已有的宗派才能创建新宗门"
+            }
+
             if (one == null){
-                if (!factionService.save(Faction(name,account.account.id))){
-                    throw RuntimeException("创建宗派失败")
+                if (count > 0){
+                    return "创建宗门失败,已经有名为${name}的宗门了"
+                }
+                val faction = Faction(name,account.account.id)
+                if (!factionService.save(faction)){
+                    throw RuntimeException("创建宗门失败")
+                }
+                account.account.factionId = faction.id
+                if(!accountService.updateById(account.account)){
+                    throw RuntimeException("创建宗门失败")
                 }
                 //TODO("需要扣除物品或者灵石")
-                return "创建宗派成功"
+                return "创建宗门成功"
             }else {
-                return "您已经创建过宗派了"
+                return "您已经创建过宗门了"
             }
         }
-        return "创建宗派失败"
+        return "创建宗门失败"
     }
 
     override fun channel(sender: Long, guild: Long, channel: Long, message: String): String {
