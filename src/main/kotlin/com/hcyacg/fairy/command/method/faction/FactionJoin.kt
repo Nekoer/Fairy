@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service
  * @Description
  **/
 @Service
-@Command("","加入宗门 [0-9]+","加入宗门 ID")
+@Command("","加入宗门 [0-9]+","加入宗门 ID 描述: 加入指定的宗门")
 class FactionJoin : GameCommandService, DependenceService(){
     override fun group(sender: Long, group: Long, message: String): String {
         try{

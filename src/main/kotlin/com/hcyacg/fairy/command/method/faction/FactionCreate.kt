@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service
  * @Description
  **/
 @Service
-@Command("","创建宗门 [a-zA-Z0-9_\u4e00-\u9fa5]+","创建宗门 宗派名")
+@Command("","创建宗门 [a-zA-Z0-9_\u4e00-\u9fa5]+","创建宗门 宗派名 描述: 创建新的宗门,同时需要消耗一定的物品")
 class FactionCreate: GameCommandService, DependenceService() {
     override fun group(sender: Long, group: Long, message: String): String {
         val name = message.replace("创建宗门 ","")

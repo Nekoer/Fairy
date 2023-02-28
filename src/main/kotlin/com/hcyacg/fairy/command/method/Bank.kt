@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service
  * @Description
  **/
 @Service
-@Command("", "(存|取)[0-9]+ [0-9]+", "存取款")
+@Command("", "(存|取)[0-9]+ [0-9]+", "(存|取)灵石id 数量 描述: 将灵石或仙石存到钱庄又或者从钱庄取出来")
 class Bank : GameCommandService, DependenceService() {
     override fun group(sender: Long, group: Long, message: String): String {
         try {

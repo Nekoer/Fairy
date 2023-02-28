@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service
  * @Description
  **/
 @Service
-@Command("重入仙途","","删号")
+@Command("重入仙途","","重入仙途 描述: 删号")
 class ReEnterThePathOfImmortality: GameCommandService, DependenceService() {
     override fun group(sender: Long, group: Long, message: String): String {
         val senderInfo = accountService.info(sender)

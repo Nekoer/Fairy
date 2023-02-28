@@ -27,7 +27,7 @@ import kotlin.math.ceil
  * @Description
  **/
 @Service
-@Command("", "对战 [0-9]+", "对战 id (与可对战对象进行战斗)")
+@Command("", "对战 [0-9]+", "对战 id 描述: 与可对战对象进行战斗,id是地图上怪物的id")
 class FightSystem : GameCommandService, DependenceService() {
     private val log = LoggerFactory.getLogger(this::class.java)
 

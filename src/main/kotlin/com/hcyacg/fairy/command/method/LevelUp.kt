@@ -12,7 +12,7 @@ import kotlin.math.ceil
  * @Description
  **/
 @Service
-@Command("突破","","突破等级")
+@Command("突破","","突破 描述: 突破当前境界")
 class LevelUp : GameCommandService, DependenceService(){
     override fun group(sender: Long, group: Long, message: String): String {
         try{

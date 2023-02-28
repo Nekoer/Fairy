@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service
  * @Description
  **/
 @Service
-@Command("", "使用 [a-zA-Z0-9_\u4e00-\u9fa5]+","例: 使用 1;使用道具,数字为背包中的物品ID")
+@Command("", "使用 [a-zA-Z0-9_\u4e00-\u9fa5]+","使用 id 描述: 使用道具,数字为背包中的物品ID")
 class PropUse : GameCommandService, DependenceService(){
     override fun group(sender: Long, group: Long, message: String): String {
         try {

@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service
  * @Description
  **/
 @Service
-@Command("帮助", "", "帮助列表, 包含所有命令及描述")
+@Command("帮助", "", "帮助 描述: 包含所有命令及描述")
 class Help : GameCommandService{
 
     override fun group(sender: Long, group: Long, message: String): String {
@@ -20,7 +20,7 @@ class Help : GameCommandService{
         var num = 0
         map.forEach { (t, u) ->
             num += 1
-            sb.append("命令:$t 描述:$u")
+            sb.append("命令:$u")
             if (map.size != num) {
                 sb.append("\n")
             }

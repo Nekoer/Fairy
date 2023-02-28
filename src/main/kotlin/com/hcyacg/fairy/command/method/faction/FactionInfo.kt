@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service
  * @Description
  **/
 @Service
-@Command("宗门信息","","宗门信息")
+@Command("宗门信息","","宗门信息 描述: 查看自己的宗门")
 class FactionInfo : GameCommandService, DependenceService(){
     override fun group(sender: Long, group: Long, message: String): String {
         try {

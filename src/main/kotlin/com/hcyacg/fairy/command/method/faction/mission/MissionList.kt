@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service
  * @Description
  **/
 @Service
-@Command("宗门任务列表","","宗门任务列表")
+@Command("宗门任务列表","","宗门任务列表 描述: 查看宗门任务")
 class MissionList : GameCommandService, DependenceService(){
     override fun group(sender: Long, group: Long, message: String): String {
         val account = accountService.info(sender)

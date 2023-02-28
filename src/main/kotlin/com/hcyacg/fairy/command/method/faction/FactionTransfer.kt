@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service
  **/
 //需要校验功能
 @Service
-@Command("","转让宗门\\[CQ:at,qq=[0-9]+\\]","转让宗门@玩家")
+@Command("","转让宗门\\[CQ:at,qq=[0-9]+\\]","转让宗门@玩家 描述: 将宗主身份转交给你@的人")
 class FactionTransfer : GameCommandService, DependenceService() {
     override fun group(sender: Long, group: Long, message: String): String {
         try {

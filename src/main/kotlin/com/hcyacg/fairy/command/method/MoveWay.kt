@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service
  * @Description
  **/
 @Service
-@Command("","移动 [上|下|左|右]","移动位置,境界到达一定程度、使用传送石均可瞬移")
+@Command("","移动 [上|下|左|右]","移动 上|下|左|右  描述: 境界到达一定程度、使用传送石均可瞬移")
 class MoveWay: GameCommandService, DependenceService() {
     override fun group(sender: Long, group: Long, message: String): String {
         val direction = message.replace("移动 ","")

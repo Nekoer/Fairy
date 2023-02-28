@@ -16,7 +16,7 @@ import java.math.BigDecimal
  * @Description
  **/
 @Service
-@Command("", "宗门任务完成 [0-9]+", "宗门任务完成 任务id")
+@Command("", "宗门任务完成 [0-9]+", "宗门任务完成 任务id 描述: 完成任务")
 class MissionComplete : GameCommandService, DependenceService() {
     override fun group(sender: Long, group: Long, message: String): String {
         try {

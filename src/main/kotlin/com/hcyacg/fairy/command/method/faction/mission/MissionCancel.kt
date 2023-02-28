@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service
  * @Description
  **/
 @Service
-@Command("", "宗门任务取消 [0-9]+", "宗门任务取消 任务id")
+@Command("", "宗门任务取消 [0-9]+", "宗门任务取消 任务id 描述: 取消已经领取的任务,但是会被算进当天的宗门任务上限")
 class MissionCancel : GameCommandService, DependenceService(){
     override fun group(sender: Long, group: Long, message: String): String {
         try {

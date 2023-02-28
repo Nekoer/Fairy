@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service
  * @Description
  **/
 @Service
-@Command("","背包 [0-9]+","查看背包")
+@Command("","背包 [0-9]+","背包 页码 描述: 查看自己的背包")
 class Backpack: GameCommandService, DependenceService() {
     override fun group(sender: Long, group: Long, message: String): String {
         val pageString = message.replace("背包 ","")

@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service
  * @Description
  **/
 @Service
-@Command("钱包","","查看自己的钱包")
+@Command("钱包","","钱包 描述: 查看自己的钱包")
 class WalletInfo : GameCommandService, DependenceService(){
     override fun group(sender: Long, group: Long, message: String): String {
         val account = accountService.info(sender)

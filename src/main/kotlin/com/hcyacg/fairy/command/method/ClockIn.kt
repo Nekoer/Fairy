@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service
  * @Description
  **/
 @Service
-@Command("签到","","每日签到会奖励物品或灵石")
+@Command("签到","","签到 描述: 每日签到会奖励物品或灵石")
 class ClockIn : GameCommandService, DependenceService(){
     override fun group(sender: Long, group: Long, message: String): String {
         val senderInfo = accountService.info(sender)

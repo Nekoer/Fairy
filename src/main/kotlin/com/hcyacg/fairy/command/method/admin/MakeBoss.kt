@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service
  * @Description
  **/
 @Service
-@Command("生成boss","","生成boss",true)
+@Command("生成boss","","生成boss 描述: 管理员权限 随机生成boss",true)
 class MakeBoss : GameCommandService, DependenceService(){
     @Autowired
     private lateinit var bossTask: BossTask

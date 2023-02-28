@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service
  * @Description
  **/
 @Service
-@Command("我要修仙","","注册修仙数据")
+@Command("我要修仙","","我要修仙 描述: 注册修仙账号")
 class Register : GameCommandService, DependenceService() {
 
 

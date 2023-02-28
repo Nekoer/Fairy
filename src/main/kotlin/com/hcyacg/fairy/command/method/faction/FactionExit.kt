@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service
  * @Description
  **/
 @Service
-@Command("退出宗门","","退出宗门")
+@Command("退出宗门","","退出宗门 描述: 退出自己加入的宗门")
 class FactionExit: GameCommandService, DependenceService()  {
     override fun group(sender: Long, group: Long, message: String): String {
         try {

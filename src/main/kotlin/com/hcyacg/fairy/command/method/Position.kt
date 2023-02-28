@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service
  * @Description
  **/
 @Service
-@Command("位置", "","查看当前的位置")
+@Command("位置", "","位置 描述: 查看当前位置")
 class Position : GameCommandService, DependenceService() {
     override fun group(sender: Long, group: Long, message: String): String {
         val senderInfo = accountService.info(sender)

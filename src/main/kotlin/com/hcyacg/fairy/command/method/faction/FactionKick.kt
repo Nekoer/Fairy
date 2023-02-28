@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service
  **/
 //TODO("需要测试")
 @Service
-@Command("","踢出宗门\\[CQ:at,qq=[0-9]+\\]","踢出宗门@玩家")
+@Command("","踢出宗门\\[CQ:at,qq=[0-9]+\\]","踢出宗门@玩家 描述: 将你@的玩家踢出宗门")
 class FactionKick : GameCommandService, DependenceService(){
     override fun group(sender: Long, group: Long, message: String): String {
         try{
