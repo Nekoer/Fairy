@@ -19,6 +19,7 @@ data class AccountDTO(
     val lingRoot: LingRoot, //灵根
     val ethnicity: Ethnicity, //种族
     val faction: Faction?,
+    val accountFaction: AccountFaction?,
     val level: Hierarchical,  //当前级别
     val upgrade: Hierarchical?, // 下一个级别
     val exerciseDTO: ExerciseDTO?, //功法属性
@@ -39,11 +40,13 @@ data class AccountDTO(
 
     fun toMessageString(): String {
         val sb = StringBuffer()
+
         sb.append("等级: ${level.level}").append("\n")
             .append("境界: ${level.name}").append("\n")
             .append("种族: ${ethnicity.name}").append("\n")
             .append("灵根: ${lingRoot.name}").append("\n")
             .append("宗派: ${faction?.name ?: "未加入宗派"}").append("\n")
+            .append("职位: ${accountFaction?.let { Patriarch.getPatriarchById(it.patriarchId).value } ?: "散修"}").append("\n")
             .append("修为: ${account.exp} / ${upgrade?.exp ?: "位面至高"}")
 
         if (upgrade == null) {

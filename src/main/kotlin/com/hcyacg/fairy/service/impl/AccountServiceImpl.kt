@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl
 import com.hcyacg.fairy.dto.AccountDTO
 import com.hcyacg.fairy.dto.ExerciseDTO
 import com.hcyacg.fairy.entity.Account
+import com.hcyacg.fairy.entity.AccountFaction
 import com.hcyacg.fairy.entity.Hierarchical
 import com.hcyacg.fairy.mapper.AccountMapper
 import com.hcyacg.fairy.service.*
@@ -49,6 +50,9 @@ class AccountServiceImpl : ServiceImpl<AccountMapper, Account>(), AccountService
 
     @Autowired
     lateinit var factionService: FactionService
+    @Autowired
+    lateinit var accountFactionService: AccountFactionService
+
     override fun register(
         uin: Long,
         isRebirth: Boolean
@@ -94,11 +98,14 @@ class AccountServiceImpl : ServiceImpl<AccountMapper, Account>(), AccountService
         return try {
             val account = getOne(QueryWrapper<Account>().eq("uin", uin))
             account?.let { it ->
+
                 val lingRoot = lingRootService.getById(account.lingRootId)
                 val ethnicity = ethnicityService.getById(account.ethnicityId)
                 val hierarchical: Hierarchical = hierarchicalService.getById(it.level)
+                val accountFaction =
+                    accountFactionService.getOne(QueryWrapper<AccountFaction>().eq("account_id",it.id))
 
-                val faction = factionService.getById(it.factionId)
+                val faction = factionService.getById(accountFaction.factionId)
                 var exerciseDTO: ExerciseDTO? = null
                 it.accountExerciseId?.let { id ->
                     val accountExerciseDTO = accountExerciseService.accountExercise(id, account.id)
@@ -151,6 +158,7 @@ class AccountServiceImpl : ServiceImpl<AccountMapper, Account>(), AccountService
                     lingRoot,
                     ethnicity,
                     faction,
+                    accountFaction,
                     hierarchical,
                     upgrade,
                     exerciseDTO,

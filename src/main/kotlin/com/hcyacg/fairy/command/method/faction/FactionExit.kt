@@ -1,8 +1,10 @@
 package com.hcyacg.fairy.command.method.faction
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper
+import com.hcyacg.fairy.DependenceService
 import com.hcyacg.fairy.command.Command
-import com.hcyacg.fairy.command.DependenceService
 import com.hcyacg.fairy.command.GameCommandService
+import com.hcyacg.fairy.entity.AccountFaction
 import org.springframework.stereotype.Service
 
 /**
@@ -17,17 +19,14 @@ class FactionExit: GameCommandService, DependenceService()  {
         try {
             val account = accountService.info(sender)
             account?.let {
-                if (account.account.factionId == null){
-                    return "退出失败,您还未加入任何宗门"
-                }
+                val accountFaction = accountFactionService.getOne(QueryWrapper<AccountFaction>().eq("account_id",account.account.id))
+                    ?: return "退出失败,您还未加入任何宗门"
 
-                val faction = factionService.getById(account.account.factionId)
+                val faction = factionService.getById(accountFaction.factionId)
                 if (faction.ownId == account.account.id){
                     return "您必须转让宗主身份方可退出"
                 } else {
-                    account.account.factionId = null
-                    account.account.contribution = 0
-                    if (!accountService.updateById(account.account)){
+                    if (!accountFactionService.removeById(accountFaction)){
                         throw RuntimeException("退出失败,更新数据失败")
                     }
                     return "退出宗门成功"

@@ -1,10 +1,11 @@
 package com.hcyacg.fairy.command.method.faction.mission
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper
+import com.hcyacg.fairy.DependenceService
 import com.hcyacg.fairy.command.Command
-import com.hcyacg.fairy.command.DependenceService
 import com.hcyacg.fairy.command.GameCommandService
 import com.hcyacg.fairy.constant.AppConstant
+import com.hcyacg.fairy.entity.AccountFaction
 import com.hcyacg.fairy.entity.AccountFactionMission
 import com.hcyacg.fairy.entity.Wallet
 import org.springframework.stereotype.Service
@@ -24,13 +25,15 @@ class MissionComplete : GameCommandService, DependenceService() {
             val factionMissionId = message.replace("宗门任务完成 ", "").toLongOrNull()
             factionMissionId?.let {
                 account?.let {
+                    val accountFaction = accountFactionService.getOne(QueryWrapper<AccountFaction>().eq("account_id",account.account.id))
+
                     val redisKey = "${AppConstant.FACTION_MISSION_CD}:${account.account.id}"
                     if (redisUtil.hasKey(redisKey)) {
                         return "请等待任务完成CD,每次提交任务需间隔30分钟"
                     }
 
 
-                    val faction = factionService.getById(account.account.factionId)
+                    val faction = factionService.getById(accountFaction.factionId)
                     faction?.let {
                         //玩家已经领取的任务
                         val accountMissionList = accountFactionMissionService.list(
@@ -65,13 +68,16 @@ class MissionComplete : GameCommandService, DependenceService() {
                                         //给与所在宗门 储备的灵石，同时会增加灵石 * 10 的建设度
                                         faction.material += it.sect
                                         faction.construction += it.sect * 10
-                                        account.account.contribution += it.sect * 10
+                                        accountFaction.contribution += it.sect * 10
 
                                         if (!factionService.updateById(faction)) {
                                             throw RuntimeException("完成任务失败,宗门数据更新失败")
                                         }
                                         if (!accountService.updateById(account.account)) {
                                             throw RuntimeException("完成任务失败,玩家数据更新失败")
+                                        }
+                                        if (!accountFactionService.updateById(accountFaction)) {
+                                            throw RuntimeException("完成任务失败,玩家宗门数据更新失败")
                                         }
                                         accountMission.status = AppConstant.FACTION_MISSION_STATE_SUCCESS
                                         if (!accountFactionMissionService.updateById(accountMission)) {
@@ -106,9 +112,12 @@ class MissionComplete : GameCommandService, DependenceService() {
                                         //给与所在宗门 储备的灵石，同时会增加灵石 * 10 的建设度
                                         faction.material += it.sect
                                         faction.construction += it.sect * 10
-                                        account.account.contribution += it.sect * 10
+                                        accountFaction.contribution += it.sect * 10
                                         if (!factionService.updateById(faction)) {
                                             throw RuntimeException("完成任务失败,宗门数据更新失败")
+                                        }
+                                        if (!accountFactionService.updateById(accountFaction)) {
+                                            throw RuntimeException("完成任务失败,玩家宗门数据更新失败")
                                         }
                                         accountMission.status = AppConstant.FACTION_MISSION_STATE_SUCCESS
                                         if (!accountFactionMissionService.updateById(accountMission)) {

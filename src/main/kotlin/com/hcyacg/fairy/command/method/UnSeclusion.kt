@@ -1,8 +1,8 @@
 package com.hcyacg.fairy.command.method
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper
+import com.hcyacg.fairy.DependenceService
 import com.hcyacg.fairy.command.Command
-import com.hcyacg.fairy.command.DependenceService
 import com.hcyacg.fairy.command.GameCommandService
 import com.hcyacg.fairy.entity.Seclusion
 import org.springframework.stereotype.Service

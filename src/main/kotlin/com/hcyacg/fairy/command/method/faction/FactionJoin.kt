@@ -1,10 +1,12 @@
 package com.hcyacg.fairy.command.method.faction
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper
+import com.hcyacg.fairy.DependenceService
 import com.hcyacg.fairy.command.Command
-import com.hcyacg.fairy.command.DependenceService
 import com.hcyacg.fairy.command.GameCommandService
+import com.hcyacg.fairy.dto.AccountFactionState
 import com.hcyacg.fairy.entity.Account
+import com.hcyacg.fairy.entity.AccountFaction
 import org.springframework.stereotype.Service
 
 /**
@@ -20,18 +22,17 @@ class FactionJoin : GameCommandService, DependenceService(){
             val account = accountService.info(sender)
             val factionId = message.replace("加入宗门 ","").toLong()
             account?.let {
-                if (account.account.factionId != null){
+                val accountFaction = accountFactionService.getOne(QueryWrapper<AccountFaction>().eq("account_id",account.account.id))
+
+                if (accountFaction != null){
                     return "加入失败,您已经加入过宗派了"
                 }
 
-                val faction = factionService.getById(factionId)
-                if (faction == null){
-                    return "加入失败,没有该ID的宗门"
-                }
+                val faction = factionService.getById(factionId) ?: return "加入失败,没有该ID的宗门"
 
-                if (account.account.factionId == factionId){
-                    return "加入失败,您已经是该宗门的弟子了"
-                }
+//                if (accountFaction.factionId == factionId){
+//                    return "加入失败,您已经是该宗门的弟子了"
+//                }
 
                 //TODO("后期可以出增加宗派人数的道具")
                 val count = accountService.count(QueryWrapper<Account>().eq("faction_id",faction.id))
@@ -39,8 +40,8 @@ class FactionJoin : GameCommandService, DependenceService(){
                     return "该宗门弟子已满"
                 }
 
-                account.account.factionId = faction.id
-                if (!accountService.updateById(account.account)){
+                if (!accountFactionService.saveOrUpdate(AccountFaction(faction.id,it.account.id,0,
+                        AccountFactionState.AUDIT.id,1))){
                     throw RuntimeException("加入失败,数据更新失败")
                 }
 

@@ -1,6 +1,6 @@
 package com.hcyacg.fairy.task
 
-import com.hcyacg.fairy.command.DependenceService
+import com.hcyacg.fairy.DependenceService
 import com.hcyacg.fairy.constant.AppConstant
 import com.hcyacg.fairy.websocket.WebSocketMessageHandler
 import com.hcyacg.fairy.websocket.WsRequest

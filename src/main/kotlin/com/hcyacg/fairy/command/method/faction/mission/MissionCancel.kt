@@ -1,10 +1,11 @@
 package com.hcyacg.fairy.command.method.faction.mission
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper
+import com.hcyacg.fairy.DependenceService
 import com.hcyacg.fairy.command.Command
-import com.hcyacg.fairy.command.DependenceService
 import com.hcyacg.fairy.command.GameCommandService
 import com.hcyacg.fairy.constant.AppConstant
+import com.hcyacg.fairy.entity.AccountFaction
 import com.hcyacg.fairy.entity.AccountFactionMission
 import org.springframework.stereotype.Service
 
@@ -22,9 +23,10 @@ class MissionCancel : GameCommandService, DependenceService(){
             val factionMissionId = message.replace("宗门任务取消 ", "").toLongOrNull()
             factionMissionId?.let {
                 account?.let {
-                    if (account.account.factionId == null){
-                        return "宗门任务查看失败,您还未加入宗门"
-                    }
+                    val accountFaction =
+                        accountFactionService.getOne(QueryWrapper<AccountFaction>().eq("account_id",account.account.id))
+                            ?: return "宗门任务查看失败,您还未加入宗门"
+
                     val accountMissionList = accountFactionMissionService.list(QueryWrapper<AccountFactionMission>().eq("account_id",account.account.id))
                     val accountMission =  accountMissionList.find { a:AccountFactionMission -> a.factionMissionId == factionMissionId }
                     accountMission?.let {

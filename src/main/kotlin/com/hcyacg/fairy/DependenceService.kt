@@ -1,4 +1,4 @@
-package com.hcyacg.fairy.command
+package com.hcyacg.fairy
 
 import com.hcyacg.fairy.service.*
 import com.hcyacg.fairy.utils.Base64Util
@@ -77,4 +77,6 @@ class DependenceService {
     lateinit var factionMissionService: FactionMissionService
     @Autowired
     lateinit var accountFactionMissionService: AccountFactionMissionService
+    @Autowired
+    lateinit var accountFactionService: AccountFactionService
 }

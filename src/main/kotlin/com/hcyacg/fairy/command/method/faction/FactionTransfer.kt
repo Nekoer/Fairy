@@ -1,9 +1,12 @@
 package com.hcyacg.fairy.command.method.faction
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper
+import com.hcyacg.fairy.DependenceService
 import com.hcyacg.fairy.command.Command
-import com.hcyacg.fairy.command.DependenceService
 import com.hcyacg.fairy.command.GameCommandService
+import com.hcyacg.fairy.dto.AccountFactionState
+import com.hcyacg.fairy.dto.Patriarch
+import com.hcyacg.fairy.entity.AccountFaction
 import com.hcyacg.fairy.entity.Faction
 import org.springframework.stereotype.Service
 
@@ -22,14 +25,17 @@ class FactionTransfer : GameCommandService, DependenceService() {
             val account = accountService.info(sender)
             val otherAccount = accountService.info(other)
             account?.let {
+                val accountFaction = accountFactionService.getOne(QueryWrapper<AccountFaction>().eq("account_id",account.account.id))
+
                 val one = factionService.getOne(QueryWrapper<Faction>().eq("own_id", account.account.id))
                 if (one == null){
                     return "您没有创建宗门"
                 }
 
                 otherAccount?.let {
+                    val otherAccountFaction = accountFactionService.getOne(QueryWrapper<AccountFaction>().eq("account_id",it.account.id))
 
-                    if (otherAccount.account.factionId != null && otherAccount.account.factionId != one.id){
+                    if (otherAccountFaction != null && otherAccountFaction.factionId != one.id){
                         return "对方已经加入了其他宗门,无法接受您的转让"
                     }
 
@@ -40,17 +46,17 @@ class FactionTransfer : GameCommandService, DependenceService() {
 
 
                     one.ownId = otherAccount.account.id
-                    otherAccount.account.factionId = one.id
-                    account.account.factionId = null
+
                     if (!factionService.updateById(one)){
                         throw RuntimeException("转让失败,数据更新失败")
                     }
 
-                    if (!accountService.updateById(otherAccount.account)){
+                    if (!accountFactionService.saveOrUpdate(AccountFaction(one.id,it.account.id,0,
+                            AccountFactionState.ACCEPT.id,Patriarch.SUZERAIN.id))){
                         throw RuntimeException("转让失败,数据更新失败")
                     }
 
-                    if (!accountService.updateById(account.account)){
+                    if (!accountFactionService.removeById(accountFaction)){
                         throw RuntimeException("转让失败,数据更新失败")
                     }
                     return "转让成功"

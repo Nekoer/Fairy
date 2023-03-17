@@ -1,9 +1,10 @@
 package com.hcyacg.fairy.command.method.faction.mission
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper
+import com.hcyacg.fairy.DependenceService
 import com.hcyacg.fairy.command.Command
-import com.hcyacg.fairy.command.DependenceService
 import com.hcyacg.fairy.command.GameCommandService
+import com.hcyacg.fairy.entity.AccountFaction
 import com.hcyacg.fairy.entity.AccountFactionMission
 import org.springframework.stereotype.Service
 
@@ -18,9 +19,9 @@ class MissionList : GameCommandService, DependenceService(){
     override fun group(sender: Long, group: Long, message: String): String {
         val account = accountService.info(sender)
         account?.let {
-            if (account.account.factionId == null){
-                return "宗门任务查看失败,您还未加入宗门"
-            }
+            val accountFaction = accountFactionService.getOne(QueryWrapper<AccountFaction>().eq("account_id",account.account.id))
+                ?: return "宗门任务查看失败,您还未加入宗门"
+
             val accountMissionList = accountFactionMissionService.list(QueryWrapper<AccountFactionMission>().eq("account_id",account.account.id))
             val list = factionMissionService.list()
             val sb = StringBuffer()

@@ -1,7 +1,7 @@
 package com.hcyacg.fairy.command.method
 
+import com.hcyacg.fairy.DependenceService
 import com.hcyacg.fairy.command.Command
-import com.hcyacg.fairy.command.DependenceService
 import com.hcyacg.fairy.command.GameCommandService
 import com.hcyacg.fairy.constant.AppConstant
 import com.hcyacg.fairy.dto.Architecture

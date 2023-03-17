@@ -1,10 +1,11 @@
 package com.hcyacg.fairy.command.method.faction.mission
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper
+import com.hcyacg.fairy.DependenceService
 import com.hcyacg.fairy.command.Command
-import com.hcyacg.fairy.command.DependenceService
 import com.hcyacg.fairy.command.GameCommandService
 import com.hcyacg.fairy.constant.AppConstant
+import com.hcyacg.fairy.entity.AccountFaction
 import com.hcyacg.fairy.entity.AccountFactionMission
 import org.springframework.stereotype.Service
 
@@ -22,9 +23,9 @@ class MissionReceive : GameCommandService, DependenceService(){
             val factionMissionId = message.replace("宗门任务接取 ","").toLongOrNull()
             factionMissionId?.let {
                 account?.let {
-                    if (account.account.factionId == null){
-                        return "宗门任务领取失败,您还未加入宗门"
-                    }
+                    val accountFaction =
+                        accountFactionService.getOne(QueryWrapper<AccountFaction>().eq("account_id",account.account.id))
+                            ?: return "宗门任务领取失败,您还未加入宗门"
 
                     val count = accountFactionMissionService.count(QueryWrapper<AccountFactionMission>().eq("account_id",account.account.id))
                     if (count > 4){

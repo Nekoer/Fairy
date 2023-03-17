@@ -1,5 +1,6 @@
 package com.hcyacg.fairy.command
 
+import com.hcyacg.fairy.DependenceService
 import com.hcyacg.fairy.websocket.WsRequest
 import io.netty.channel.ChannelHandlerContext
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame

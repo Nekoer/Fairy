@@ -1,10 +1,11 @@
 package com.hcyacg.fairy.command.method.faction
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper
+import com.hcyacg.fairy.DependenceService
 import com.hcyacg.fairy.command.Command
-import com.hcyacg.fairy.command.DependenceService
 import com.hcyacg.fairy.command.GameCommandService
-import com.hcyacg.fairy.entity.Account
+import com.hcyacg.fairy.dto.Patriarch
+import com.hcyacg.fairy.entity.AccountFaction
 import org.springframework.stereotype.Service
 
 /**
@@ -19,18 +20,18 @@ class FactionInfo : GameCommandService, DependenceService(){
         try {
             val account = accountService.info(sender)
             account?.let {
-                if (account.account.factionId == null){
-                    return "您未加入宗门"
-                }
+                val accountFaction = accountFactionService.getOne(QueryWrapper<AccountFaction>().eq("account_id",account.account.id))
+                    ?: return "您未加入宗门"
 
-                val faction = factionService.getById(account.account.factionId)
+                val faction = factionService.getById(accountFaction.factionId)
                 val master = accountService.getById(faction.ownId)
-                val count = accountService.count(QueryWrapper<Account>().eq("faction_id",faction.id))
+                val count = accountFactionService.count(QueryWrapper<AccountFaction>().eq("faction_id",faction.id))
 
                 return "宗门: ${faction.name}".plus("\n")
                     .plus("宗主: ${master.uin}").plus("\n")
+                    .plus("当前职位: ${Patriarch.getPatriarchById(accountFaction.patriarchId).value}").plus("\n")
                     .plus("建设度: ${faction.construction}").plus("\n")
-                    .plus("贡献值(你/全体): ${account.account.contribution}/${faction.construction}").plus("\n")
+                    .plus("贡献值(你/全体): ${accountFaction.contribution}/${faction.construction}").plus("\n")
                     .plus("资材: ${faction.material}").plus("\n")
                     .plus("成员: ${count}/${faction.member}")
             }

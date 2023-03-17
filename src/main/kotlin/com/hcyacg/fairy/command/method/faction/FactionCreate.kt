@@ -1,9 +1,12 @@
 package com.hcyacg.fairy.command.method.faction
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper
+import com.hcyacg.fairy.DependenceService
 import com.hcyacg.fairy.command.Command
-import com.hcyacg.fairy.command.DependenceService
 import com.hcyacg.fairy.command.GameCommandService
+import com.hcyacg.fairy.dto.AccountFactionState
+import com.hcyacg.fairy.dto.Patriarch
+import com.hcyacg.fairy.entity.AccountFaction
 import com.hcyacg.fairy.entity.Faction
 import org.springframework.stereotype.Service
 
@@ -19,9 +22,11 @@ class FactionCreate: GameCommandService, DependenceService() {
         val name = message.replace("创建宗门 ","")
         val account = accountService.info(sender)
         account?.let {
+            val accountFaction = accountFactionService.getOne(QueryWrapper<AccountFaction>().eq("account_id",account.account.id))
+
             val one = factionService.getOne(QueryWrapper<Faction>().eq("own_id", account.account.id))
             val count = factionService.count(QueryWrapper<Faction>().eq("name",name))
-            if (it.account.factionId != null){
+            if (accountFaction != null){
                 return "创建宗门失败,您需要退出已有的宗派才能创建新宗门"
             }
 
@@ -33,8 +38,9 @@ class FactionCreate: GameCommandService, DependenceService() {
                 if (!factionService.save(faction)){
                     throw RuntimeException("创建宗门失败")
                 }
-                account.account.factionId = faction.id
-                if(!accountService.updateById(account.account)){
+
+                if(!accountFactionService.saveOrUpdate(AccountFaction(faction.id,it.account.id,0,
+                        AccountFactionState.ACCEPT.id, Patriarch.SUZERAIN.id))){
                     throw RuntimeException("创建宗门失败")
                 }
                 //TODO("需要扣除物品或者灵石")

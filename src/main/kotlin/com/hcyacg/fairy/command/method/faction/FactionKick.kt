@@ -1,8 +1,11 @@
 package com.hcyacg.fairy.command.method.faction
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper
+import com.hcyacg.fairy.DependenceService
 import com.hcyacg.fairy.command.Command
-import com.hcyacg.fairy.command.DependenceService
 import com.hcyacg.fairy.command.GameCommandService
+import com.hcyacg.fairy.dto.Patriarch
+import com.hcyacg.fairy.entity.AccountFaction
 import org.springframework.stereotype.Service
 
 /**
@@ -20,13 +23,31 @@ class FactionKick : GameCommandService, DependenceService(){
             val account = accountService.info(sender)
             val otherAccount = accountService.info(other)
             account?.let {
-                val faction = factionService.getById(account.account.factionId)
+                val accountFaction = accountFactionService.getOne(QueryWrapper<AccountFaction>().eq("account_id",account.account.id))
+
+                val faction = factionService.getById(accountFaction.factionId)
                 faction?.let {
                     otherAccount?.let {
-                        if (otherAccount.account.factionId != null && otherAccount.account.factionId == faction.id && otherAccount.account.id == faction.ownId){
-                            otherAccount.account.factionId = null
-                            otherAccount.account.contribution = 0
-                            if (!accountService.updateById(otherAccount.account)){
+                        val otherAccountFaction = accountFactionService.getOne(QueryWrapper<AccountFaction>().eq("account_id",it.account.id))
+
+                        if (otherAccountFaction.factionId == faction.id && otherAccountFaction.accountId == faction.ownId){
+
+                            //TODO 判断权限
+                            if (accountFaction.patriarchId != Patriarch.SUZERAIN.id && accountFaction.patriarchId != Patriarch.ELDER.id){
+                                return "你没有权限踢出该宗门弟子"
+                            }
+
+                            //对方是长老而你不是宗主
+                            if (accountFaction.patriarchId != Patriarch.SUZERAIN.id && otherAccountFaction.patriarchId == Patriarch.ELDER.id){
+                                return "你没有权限踢出该宗门长老"
+                            }
+
+                            if (otherAccountFaction.patriarchId == Patriarch.SUZERAIN.id){
+                                return "你没有权限踢出该宗门宗主"
+                            }
+
+
+                            if (!accountFactionService.removeById(otherAccountFaction)){
                                 throw RuntimeException("踢出失败,数据更新失败")
                             }
                             return "踢出成功"

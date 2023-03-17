@@ -1,7 +1,7 @@
 package com.hcyacg.fairy.task
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper
-import com.hcyacg.fairy.command.DependenceService
+import com.hcyacg.fairy.DependenceService
 import com.hcyacg.fairy.constant.AppConstant
 import com.hcyacg.fairy.entity.AccountFactionMission
 import com.hcyacg.fairy.websocket.WebSocketMessageHandler

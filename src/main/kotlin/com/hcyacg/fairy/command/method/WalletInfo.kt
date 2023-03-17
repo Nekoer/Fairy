@@ -1,8 +1,8 @@
 package com.hcyacg.fairy.command.method
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper
+import com.hcyacg.fairy.DependenceService
 import com.hcyacg.fairy.command.Command
-import com.hcyacg.fairy.command.DependenceService
 import com.hcyacg.fairy.command.GameCommandService
 import com.hcyacg.fairy.entity.Bank
 import com.hcyacg.fairy.entity.Wallet
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service
  * @Description
  **/
 @Service
-@Command("钱包","","钱包 描述: 查看自己的钱包")
+@Command("荷包","","荷包 描述: 查看自己的钱包")
 class WalletInfo : GameCommandService, DependenceService(){
     override fun group(sender: Long, group: Long, message: String): String {
         val account = accountService.info(sender)
