@@ -42,6 +42,7 @@ data class AccountDTO(
         val sb = StringBuffer()
 
         sb.append("等级: ${level.level}").append("\n")
+            .append("道号: ${account.nickname ?: "无"}").append("\n")
             .append("境界: ${level.name}").append("\n")
             .append("种族: ${ethnicity.name}").append("\n")
             .append("灵根: ${lingRoot.name}").append("\n")

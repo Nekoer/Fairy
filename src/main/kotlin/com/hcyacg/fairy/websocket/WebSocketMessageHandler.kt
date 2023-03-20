@@ -1,6 +1,5 @@
 package com.hcyacg.fairy.websocket
 
-import com.hcyacg.fairy.command.GameCommandHandler
 import io.netty.channel.ChannelHandler
 import io.netty.channel.ChannelHandlerContext
 import io.netty.channel.SimpleChannelInboundHandler
@@ -54,7 +53,7 @@ class WebSocketMessageHandler : SimpleChannelInboundHandler<WebSocketFrame>() {
     }
 
     @Autowired
-    private lateinit var gameCommandHandler : GameCommandHandler
+    private lateinit var gameCommandHandler : com.hcyacg.fairy.core.command.GameCommandHandler
 
 
     override fun channelRead0(ctx: ChannelHandlerContext?, msg: WebSocketFrame?) {

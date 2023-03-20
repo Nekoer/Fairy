@@ -1,7 +1,7 @@
 package com.hcyacg.fairy.task
 
-import com.hcyacg.fairy.DependenceService
 import com.hcyacg.fairy.constant.AppConstant
+import com.hcyacg.fairy.core.DependenceService
 import com.hcyacg.fairy.websocket.WebSocketMessageHandler
 import com.hcyacg.fairy.websocket.WsRequest
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame

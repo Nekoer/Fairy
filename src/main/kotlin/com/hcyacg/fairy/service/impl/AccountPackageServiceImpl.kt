@@ -10,7 +10,7 @@ import com.hcyacg.fairy.mapper.AccountMapper
 import com.hcyacg.fairy.mapper.AccountPackageMapper
 import com.hcyacg.fairy.service.AccountPackageService
 import com.hcyacg.fairy.service.ItemService
-import com.hcyacg.fairy.service.ItemTypeService
+
 import com.hcyacg.fairy.service.ItemUsageService
 import lombok.EqualsAndHashCode
 import lombok.NoArgsConstructor
@@ -32,8 +32,7 @@ import org.springframework.transaction.annotation.Transactional
 class AccountPackageServiceImpl @Autowired constructor(
     protected var accountMapper: AccountMapper,
     private var itemService: ItemService,
-    private var itemUsageService: ItemUsageService,
-    private var itemTypeService: ItemTypeService
+    private var itemUsageService: ItemUsageService
 ) : ServiceImpl<AccountPackageMapper, AccountPackage>(), AccountPackageService {
 
     override fun getPackagePage(accountId: Long, page: Long): AccountItemPage? {
@@ -58,7 +57,7 @@ class AccountPackageServiceImpl @Autowired constructor(
                         )
 
                     }
-                    itemTypeService.getItemTypeById(item.itemTypeId)?.let { itemType ->
+                    ItemType.getItemTypeById(item.itemTypeId).let { itemType ->
                         accountItems.add(
                             AccountItem(
                                 id = accountPackage.id,

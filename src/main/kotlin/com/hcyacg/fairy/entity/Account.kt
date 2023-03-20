@@ -35,6 +35,7 @@ data class Account(
     var probability:Long, //突破概率
     @TableField(value = "account_exercise_id", updateStrategy = FieldStrategy.IGNORED)
     val accountExerciseId: Long?, // 玩家的功法
+    var nickname:String?,
 ) {
     constructor(
         uin: Long,
@@ -43,7 +44,7 @@ data class Account(
         lingRootId: Long,
         ethnicityId: Long,
         worldMapId: Long
-    ) : this(0, uin, exp,1,0,0, point, lingRootId, ethnicityId, worldMapId,100,null) {
+    ) : this(0, uin, exp,1,0,0, point, lingRootId, ethnicityId, worldMapId,100,null,null) {
 
     }
 }

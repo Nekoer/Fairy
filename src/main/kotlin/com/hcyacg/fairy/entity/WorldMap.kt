@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor
 @TableName("world_map")
 data class WorldMap(
     @TableId(type = IdType.AUTO)
-    val id: String,
+    val id: Long,
     val name: String, //地址名
     @TableField("top_id", updateStrategy = FieldStrategy.IGNORED)
     val topId: Long?, //往上走的地址id

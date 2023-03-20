@@ -1,6 +1,5 @@
 package com.hcyacg.fairy.dto
 
-import com.hcyacg.fairy.entity.ItemType
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import lombok.AllArgsConstructor
